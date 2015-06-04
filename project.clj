@@ -1,8 +1,10 @@
 (defproject com.bjondinc/recurrence-expression "0.1.0-SNAPSHOT"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :license {:name "GNU Lesser General Public License v3.0"
+            :url "http://www.gnu.org/licenses/lgpl-3.0.txt"
+            :year 2015
+            :key "lgpl-3.0"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [clj-time "0.8.0"]

@@ -8,7 +8,8 @@ FIXME
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright &copy; 2015 Bjönd, Inc.
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+This project is licensed under the [GNU Lesser General Public License v3.0][license].
+
+[license]: http://www.gnu.org/licenses/lgpl-3.0.txt
