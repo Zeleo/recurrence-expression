@@ -12,7 +12,7 @@ Here is an example of a recurrence expression:
 { "every": { "second": 10 } }
 ```
 
-Above expression means "every 10 seconds".  OK, "Every 10 seconds" is
+Above expression means "every 10 seconds".  OK, "every 10 seconds" is
 a rather trivial pattern.  Here's a bit more complex example:
 
 ```json
