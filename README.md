@@ -42,6 +42,28 @@ recurrence expression.  We'll review it and try to accommodate it.
 
 Our thanks for looking.
 
+## Rationale
+
+This project started out as a calculation engine to implement a custom trigger
+for Quartz Scheduler.  Although Quartz comes with a handful of
+built-in triggers, it's impossible to compose single trigger that
+satisfies all your scheduling needs.  So we decided to roll our own.
+
+We admit we aren't the absolute expert on recurrence patterns.  But ~~googling~~
+researching a bit on the subject, we dug out the following relevant
+software:
+
+1. [Cron](http://en.wikipedia.org/wiki/Cron)
+1. [Microsoft Outlook RecurrencePattern](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx)
+1. Several Javascript libraries, which are similar to Outlook's
+RecurrencePattern.
+
+The venerable cron is surprisingly deficient in expressing recurrence
+patterns we use to arrange meetings, for example.  Microsoft Outlook
+is pretty good, but it's not very flexible and lacks where cron
+shines.  With recurrence-expression we hope to cover both grounds and
+more.
+
 ## Usage
 
 ### Installation
@@ -50,7 +72,7 @@ Recurrence expression is available in Maven central.
 
 If you use Maven, at this to your `pom.xml`:
 
-```
+```xml
 <dependency>
   <groupId>com.bjondinc</groupId>
   <artifactId>recurrence-expression</artifactId>
@@ -61,29 +83,51 @@ If you use Maven, at this to your `pom.xml`:
 If you use Clojure and use Leiningen, add this to the `:dependencies`
 section of your `project.clj`:
 
-```
+```clojure
 [com.bjondinc/recurrence-expression "0.1.0"]
 ```
 
-Finally, if you use gradle:
+Finally if you use gradle, add this under `dependencies`:
 
-```
+```gradle
 compile 'com.bjondinc:recurrence-expression:0.1.0'
 ```
 
 ### Clojure
 
-TODO
+Recurrence-expression uses clj-time internally and currently requires you to use
+clj-time's `date-time` to specify a point in time.
 
+```clojure
+;; load libraries
+user> (require '[clj-time.core :as t])
+user> (require '[recurrence-expression.core :as rc])
+
+;; ":every" clause requires a start-time.
+user> (def start-time (t/date-time 2015 03 14))
+#'user/start-time
+user> start-time
+#<DateTime 2015-03-14T00:00:00.000Z>
+
+user> (rc/next-fire-time (t/date-time 2015 03 14 9 26 53) { :every { :second 10 }} start-time)
+#<DateTime 2015-03-14T09:27:00.000Z>
+user>
+```
 ### Java
 
 TODO
 
-## Examples
+## Example Expressions
 
-## Rationale
+TODO
 
 ## TODOs
+
+1. Finish README.md
+1. Fix miscellaneous defects.
+1. Refine interface.
+1. Consider switching to Hubert for schema validation.
+1. Add test.check tests.
 
 ## License
 
