@@ -41,8 +41,7 @@ There is also a sister library called "recurrence-trigger" that
 provides a custom trigger for Quartz Scheduler.  This Quartz trigger
 uses recurrence expression.
 
-Recurrence expression aims to make it simple to say simple things,
-while making it possible to say complex things.  We welcome your
+Recurrence expression aims to make it simple to say simple things while making it possible to say complex things.  We welcome your
 feedback, although we still need to figure out how to actually gather
 your feedback.  We'll follow up on this shortly.  Let us know if you
 have a real-life recurrence pattern you can describe in English but
