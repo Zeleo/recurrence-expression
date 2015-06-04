@@ -74,7 +74,7 @@ To be sure, both Cron and Outlook have a lot of happy users.  Each
 of them individually cover most recurrence patterns we want to
 express.
 
-There are, however, some edge case patterns neither Cron or Outlook
+There are, however, some edge-case patterns neither Cron or Outlook
 can express.  Also, there are some patterns that can be expressed in
 Outlook but not in Cron, and vice versa.
 
