@@ -1,6 +1,7 @@
 # recurrence-expression
 
 This library defines a JSON schema for expressing recurrence patterns.
+
 We denote a list of dates when we arrange recurring meetings: for
 example, "Let's meet every 3rd Thursday".  Recurrence expression
 captures these types of patterns.
