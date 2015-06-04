@@ -9,8 +9,7 @@
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [clj-time "0.8.0"]
                  [prismatic/schema "0.4.0"]
-                 [org.clojure/data.json "0.2.6"]
-                 [org.quartz-scheduler/quartz "2.2.1"]]
+                 [org.clojure/data.json "0.2.6"]]
   :deploy-repositories [["releases" {:url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                                      :creds :gpg}
                          "snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"
