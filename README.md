@@ -55,7 +55,7 @@ We admit we aren't the absolute expert on recurrence patterns.  But as
 far as we know, there are two main exemplars in computer software for
 specifying recurrence patterns:
 
-1. [Cron](http://en.wikipedia.org/wiki/Cron)
+1. [Crontab for Cron](http://crontab.org)
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 
 Both Cron and Outlook have a lot of happy users.  And each of them
