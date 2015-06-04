@@ -9,7 +9,7 @@ Here is an example of a recurrence expression:
 
 
 ```json
-{ 'every': { 'second': 10 } }
+{ "every": { "second": 10 } }
 ```
 
 Above expression means "every 10 seconds".  OK, "Every 10 seconds" is
