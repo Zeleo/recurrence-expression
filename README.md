@@ -44,25 +44,31 @@ Our thanks for looking.
 
 ## Rationale
 
-This project started out as a calculation engine to implement a custom trigger
-for Quartz Scheduler.  Although Quartz comes with a handful of
-built-in triggers, it's impossible to compose single trigger that
-satisfies all your scheduling needs.  So we decided to roll our own.
+This project started out as a custom trigger for Quartz Scheduler.
+Quartz comes with a handful of built-in triggers, but they could not
+satisfy all our scheduling needs.  So we decided to roll our own.  We
+used Clojure to implement the date calculation, and as a result it was
+easy to separate this project out from the parts that interfaces with
+Quartz.
 
-We admit we aren't the absolute expert on recurrence patterns.  But ~~googling~~
-researching a bit on the subject, we dug out the following relevant
-software:
+We admit we aren't the absolute expert on recurrence patterns.  But as
+far as we know, there are two main exemplars in computer software for
+specifying recurrence patterns:
 
 1. [Cron](http://en.wikipedia.org/wiki/Cron)
-1. [Microsoft Outlook RecurrencePattern](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx)
-1. Several Javascript libraries, which are similar to Outlook's
-RecurrencePattern.
+2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 
-The venerable cron is surprisingly deficient in expressing recurrence
-patterns we use to arrange meetings, for example.  Microsoft Outlook
-is pretty good, but it's not very flexible and lacks where cron
-shines.  With recurrence-expression we hope to cover both grounds and
-more.
+Both Cron and Outlook have a lot of happy users.  And each of them
+individually cover most recurrence patterns we want to express.
+
+There are, however, some edge case patterns neither Cron or Outlook
+can express.  Also, there are some patterns that can be expressed in
+Outlook but not in Cron, and vice versa.
+
+Recurrence expression is a superset of Cron expression and Outlook's
+recurrence pattern.  It is also capable of expressing patterns that
+neither Cron nor Outlook can express.  A bit verbose, we admit, but
+it's also a lot more readable than, say, `59 11 * * 1-5`.
 
 ## Usage
 
@@ -70,7 +76,7 @@ more.
 
 Recurrence expression is available in Maven central.
 
-If you use Maven, at this to your `pom.xml`:
+If you use Maven, add this to your `pom.xml`:
 
 ```xml
 <dependency>
