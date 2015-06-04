@@ -1,7 +1,7 @@
 # recurrence-expression
 
 This library defines a JSON schema for expressing recurrence patterns.
-We denote list of dates when we arrange recurring meetings: for
+We denote a list of dates when we arrange recurring meetings: for
 example, "Let's meet every 3rd Thursday".  Recurrence expression
 captures these types of patterns.
 
@@ -59,7 +59,7 @@ used Clojure to implement the date calculation, and as a result it was
 easy to separate this project out from the parts that interfaces with
 Quartz.
 
-We admit we aren't the absolute expert on recurrence patterns.  But we
+We admit we aren't the absolute experts on recurrence patterns.  But we
 are aware of two main exemplars in computer software for specifying
 recurrence patterns:
 
