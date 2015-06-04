@@ -21,7 +21,7 @@ TBD
 ```
 
 We have more examples listed in the
-[Example Expression](https://github.com/Bjond/recurrence-expression#example-expressions)
+[Example Expressions](https://github.com/Bjond/recurrence-expression#example-expressions)
 Section below.
 
 Several functions are included in this library to validate and
