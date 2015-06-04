@@ -1,46 +1,54 @@
 # recurrence-expression
 
-This library defines a Clojure object schema for expressing recurrence
-patterns.  For example,
+This library defines a JSON schema for expressing recurrence patterns.
+We denote list of dates when we arrange recurring meetings: for
+example, "Let's meet every 3rd Thursday".  Recurrence expression
+captures these types of patterns.
 
-```
-{ :every { :second 10 } }
-```
-Above expresses what we ordinarily mean by "every 10 seconds".  OK, "Every
-10 seconds" is a rather trivial pattern.  Recurrence expression allows
-for expressing more complex patterns.  See more examples in the Usage
-section below.
+Here is an example of a recurrence expression:
 
-Several functions are included in this library to validate and
-interpret recurrence expressions.  These functions answer the
-following types of questions:
 
-1. Is this object a recurrence expression?
-2. Given a recurrence expression and time `t`, what is the next
-occurrence after time `t`?
-3. etc, etc...
-
-Although this project is written in Clojure, our aim is to serve the
-entire JVM community.  To facilitate adoption, this library contains a
-Java class that exposes the functions provided by the library.
-If you use the Java class, you can write recurrence expression in
-JSON.  Like this:
-
-```
+```json
 { 'every': { 'second': 10 } }
 ```
+
+Above expression means "every 10 seconds".  OK, "Every 10 seconds" is
+a rather trivial pattern.  Here's a bit more complex example:
+
+```json
+TBD
+```
+
+We have more examples listed in the
+[Example Expression](https://github.com/Bjond/recurrence-expression#example-expressions)
+Section below.
+
+Several functions are included in this library to validate and
+interpret recurrence expressions.  With these functions you can do
+these things:
+
+1. Validation: is this JSON a legal recurrence expression?
+2. Calculation: Given a recurrence expression and time `t`, what is the next
+occurrence after time `t`?
+3. Matching: does this time matches this recurrence expression?
+
+This project is written in Clojure, but our aim is to serve the
+entire JVM community.  We provide a wrapper Java class to facilitate
+adoption.  Most functions are exposed through this wrapper class.
+
 There is also a sister library called "recurrence-trigger" that
-provides a custom trigger for Quartz Scheduler.  This custom trigger
-is based on recurrence expression.
+provides a custom trigger for Quartz Scheduler.  This Quartz trigger
+uses recurrence expression.
 
 Recurrence expression aims to make it simple to say simple things,
 while making it possible to say complex things.  We welcome your
-feedback, although we still need to figure out how to gather your
-feedback.  We'll follow up.  Let us know if you have a practical
-recurrence pattern you can describe in English but not supported by
-recurrence expression.  We'll review it and try to accommodate it.
+feedback, although we still need to figure out how to actually gather
+your feedback.  We'll follow up on this shortly.  Let us know if you
+have a real-life recurrence pattern you can describe in English but
+not supported by recurrence expression.  We'll review it and try to
+accommodate it.
 
-Our thanks for looking.
+Our sincere thanks for checking out this library.
 
 ## Rationale
 
@@ -51,15 +59,20 @@ used Clojure to implement the date calculation, and as a result it was
 easy to separate this project out from the parts that interfaces with
 Quartz.
 
-We admit we aren't the absolute expert on recurrence patterns.  But as
-far as we know, there are two main exemplars in computer software for
-specifying recurrence patterns:
+We admit we aren't the absolute expert on recurrence patterns.  But we
+are aware of two main exemplars in computer software for specifying
+recurrence patterns:
 
 1. [Crontab for Cron](http://crontab.org)
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 
-Both Cron and Outlook have a lot of happy users.  And each of them
-individually cover most recurrence patterns we want to express.
+Most scheduling software tools and libraries either use a variant of
+cron expression or follow a similar approach to Outlook recurrence
+pattern.
+
+To be sure, both Cron and Outlook have a lot of happy users.  Each
+of them individually cover most recurrence patterns we want to
+express.
 
 There are, however, some edge case patterns neither Cron or Outlook
 can express.  Also, there are some patterns that can be expressed in
@@ -129,11 +142,13 @@ TODO
 
 ## TODOs
 
+1. rename :repeat --> :at
 1. Finish README.md
 1. Fix miscellaneous defects.
-1. Refine interface.
+1. Refine interface (Joda time, clj-time, and instance-pattern)
 1. Consider switching to Hubert for schema validation.
 1. Add test.check tests.
+1. Consider switching to cheshire for JSON<-->Clojure translation.
 
 ## License
 
