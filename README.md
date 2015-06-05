@@ -21,7 +21,7 @@ complex example:
 
 ```json
 { "between": { "from": { "hour": 9, "minute": 30 },
-               "to": { "hour: 5, "minute": 30 } },
+               "to": { "hour": 5, "minute": 30 } },
   "at": { "minute": [ 0, 15, 30, 45 ] } }
 ```
 
