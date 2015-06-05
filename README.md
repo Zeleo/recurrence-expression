@@ -1,10 +1,10 @@
 # recurrence-expression
 
-This library defines a JSON schema for expressing recurrence patterns.
+This library defines a JSON schema for expressing recurrence
+patterns.  It's a Java library but written in Clojure.
 
-We denote a list of dates when we arrange recurring meetings: for
-example, "Let's meet every 3rd Thursday".  Recurrence expression
-captures these types of patterns.
+Recurrence pattern is the pattern of date and time you establish when
+you say, for example, "Let's meet every Tuesday at 9:30am".
 
 Here is an example of a recurrence expression:
 
@@ -13,17 +13,19 @@ Here is an example of a recurrence expression:
 { "every": { "second": 10 } }
 ```
 
-Above expression means "every 10 seconds".  OK, "every 10 seconds" is
-a rather trivial pattern.  Here's a bit more complex example:
+Above expression means "every 10 seconds".
+
+OK, "every 10 seconds" is a rather trivial pattern.  Here's a bit more
+complex example:
 
 
 ```json
-TBD
+{ "between": { "from": { "hour": 9, "minute": 30 },
+               "to": { "hour: 5, "minute": 30 } },
+  "at": { "minute": [ 0, 15, 30, 45 ] } }
 ```
 
-We have more examples listed in the
-[Example Expressions](https://github.com/Bjond/recurrence-expression#example-expressions)
-Section below.
+Above means "Everybday between 9:30am to 5:30pm, every 15 minutes".
 
 Several functions are included in this library to validate and
 interpret recurrence expressions.  With these functions you can do
@@ -34,9 +36,9 @@ these things:
 occurrence after time `t`?
 3. Matching: does this time matches this recurrence expression?
 
-This project is written in Clojure, but our aim is to serve the
-entire JVM community.  We provide a wrapper Java class to facilitate
-adoption.  Most functions are exposed through this wrapper class.
+This project is written in Clojure, but we aim to serve the entire JVM
+community.  We provide a wrapper Java class to that end.  Most
+functions are exposed through this wrapper class.
 
 There is also a sister library called "recurrence-trigger" that
 provides a custom trigger for Quartz Scheduler.  This Quartz trigger
@@ -55,21 +57,21 @@ Our sincere thanks for checking out this library.
 ## Rationale
 
 This project started out as a custom trigger for Quartz Scheduler.
-Quartz comes with a handful of built-in triggers, but they could not
+Quartz comes with a handful of built-in triggers, but they did not
 satisfy all our scheduling needs.  So we decided to roll our own.  We
 used Clojure to implement the date calculation, and as a result it was
 easy to separate this project out from the parts that interfaces with
 Quartz.
 
-We admit we aren't the absolute experts on recurrence patterns.  But we
-are aware of two main exemplars in computer software for specifying
-recurrence patterns:
+We aren't the absolute experts on schedulers and recurrences.
+However, we are aware of two main exemplars in computer software for
+specifying recurrence patterns:
 
 1. [Crontab for Cron](http://crontab.org)
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 
-Most scheduling software tools and libraries either use a variant of
-cron expression or follow a similar approach to Outlook recurrence
+Scheduling software tools and libraries seem to use either a variant
+of cron expression or follow a similar approach to Outlook recurrence
 pattern.
 
 To be sure, both Cron and Outlook have a lot of happy users.  Each
@@ -150,6 +152,7 @@ TODO
 1. Finish README.md
 1. Timezone support within next-time function.
 1. Fix miscellaneous defects.
+   1. Make sure end-time is respected.
 1. Refine interface (Joda time, clj-time, and instance-pattern)?
 1. Support roll-over.
 1. Consider switching to Hubert for schema validation.
