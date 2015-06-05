@@ -4,8 +4,8 @@ This library defines a JSON schema for expressing recurrence
 patterns.  It's a Java library but written in Clojure.
 
 Recurrence pattern is the pattern of date and time you establish when
-you say, for example, "Let's meet every Tuesday at 9:30am".  Recurrence
-expression lets you write these patterns in JSON.
+you say, for example, "Let's meet every Tuesday at 9:30am".  Recurrence 
+expression lets you specify these patterns in JSON.
 
 Here is an example of a recurrence expression:
 
