@@ -811,5 +811,16 @@ default values now explicitly stated")
         actual-times (next-n-times current-time exp (count expected-times)
                                    start-time end-time)]
     (is (= expected-times actual-times))))
-    
 
+(deftest test-not-quite-leap-years
+  (let [exp { :at { :month 2 :day 28 } }
+        start-time (t/date-time 2015)
+        end-time (t/date-time 2030)
+        current-time start-time
+        expected-times [(t/date-time 2015 2 28)
+                        (t/date-time 2016 2 28)
+                        (t/date-time 2017 2 28)
+                        (t/date-time 2018 2 28)]
+        actual-times (next-n-times current-time exp (count expected-times)
+                                   start-time end-time)]
+    (is (= expected-times actual-times))))
