@@ -392,7 +392,7 @@
   )
 
 (deftest test-compute-fire-times-second
-  (let [schedule { :repeat  { :second [ 0 5 15 45 ] } }
+  (let [schedule { :at  { :second [ 0 5 15 45 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         fire-times (compute-fire-times time schedule 5)]
     (is (= (t/date-time 2025 6 15 12 30 45)
@@ -408,7 +408,7 @@
     ))
 
 (deftest test-compute-fire-times-minute
-  (let [schedule { :repeat  { :minute [ 0 5 15 45 ] } }
+  (let [schedule { :at  { :minute [ 0 5 15 45 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         fire-times (compute-fire-times time schedule 5)]
     (is (= (t/date-time 2025 6 15 12 45 0)
@@ -424,7 +424,7 @@
     ))
 
 (deftest test-compute-fire-times-hour
-  (let [schedule { :repeat  { :hour [ 9 17 21 ] } }
+  (let [schedule { :at  { :hour [ 9 17 21 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         fire-times (compute-fire-times time schedule 6)]
     (is (= 6 (count fire-times)))
@@ -443,7 +443,7 @@
     ))
 
 (deftest test-compute-fire-times-day
-  (let [schedule { :repeat  { :day [ 5 15 25 ] } }
+  (let [schedule { :at  { :day [ 5 15 25 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         fire-times (compute-fire-times time schedule 6)]
     (is (= 6 (count fire-times)))
@@ -462,7 +462,7 @@
     ))
 
 (deftest test-compute-fire-times-month
-  (let [schedule { :repeat  { :month [ 3 6 9 ] } }
+  (let [schedule { :at  { :month [ 3 6 9 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         fire-times (compute-fire-times time schedule 6)]
     (is (= 6 (count fire-times)))
@@ -481,7 +481,7 @@
     ))
 
 (deftest test-compute-fire-times-year
-  (let [schedule { :repeat  { :year [ 2026, 2027, 2031, 2040 ] } }
+  (let [schedule { :at  { :year [ 2026, 2027, 2031, 2040 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         this-many-times 4
         fire-times (compute-fire-times time schedule this-many-times)]
@@ -497,7 +497,7 @@
     ))
 
 (deftest test-compute-fire-times-simple-mixed
-  (let [schedule { :repeat  {
+  (let [schedule { :at  {
                              :hour [ 9 10 11 12 ]
                              :minute 30
                              } }
@@ -523,7 +523,7 @@
   (let [schedule {
                   :between [{ :from { :hour 9 } :to { :hour 10 } }
                             { :from { :hour 13 } :to { :hour 14 } }]
-                   :repeat [{ :minute 10 } { :minute 20 }]
+                   :at [{ :minute 10 } { :minute 20 }]
                   }
         time (t/date-time 2025 6 15 12 30 30)
         this-many-times 7
@@ -682,7 +682,7 @@ default values now explicitly stated")
 (deftest test-every
   (let [s {
            :every { :month 2 }
-           :repeat { :day { :weekOfMonth 2 :dayOfWeek 3 } :hour 14 :minute 30 :second 45 }
+           :at { :day { :weekOfMonth 2 :dayOfWeek 3 } :hour 14 :minute 30 :second 45 }
            }
         start-time (t/date-time 2015 4 1)
         current-time (t/date-time 2015 4 22)
@@ -715,7 +715,7 @@ default values now explicitly stated")
 (deftest test-every-2
   (let [s {
            :every { :month 13 }
-           :repeat { :day { :weekOfMonth 3 :dayOfWeek 4 } :hour 9 :minute 30 }
+           :at { :day { :weekOfMonth 3 :dayOfWeek 4 } :hour 9 :minute 30 }
            }
         start-time (t/date-time 2015 1 1)
         current-time (t/date-time 2015 4 22)
@@ -770,13 +770,13 @@ default values now explicitly stated")
 (deftest test-to-and-from-json
   (let [s {
            :every { :month 13 }
-           :repeat { :day { :weekOfMonth 3 :dayOfWeek 4 } :hour 9 :minute 30 }
+           :at { :day { :weekOfMonth 3 :dayOfWeek 4 } :hour 9 :minute 30 }
            }
         json (to-json s)]
     (is (= s (from-json json)))))
 
 (deftest test-every-13-months
-  (let [schedule { :every { :month 13 } :repeat { :day { :weekOfMonth 3 :dayOfWeek 5 } } }
+  (let [schedule { :every { :month 13 } :at { :day { :weekOfMonth 3 :dayOfWeek 5 } } }
         start-time (t/date-time 2015 4 14 10 35 39)
         current-time (t/plus start-time (t/seconds 2))
         expected-time (t/date-time 2015 4 17 0 0 0)]
@@ -787,7 +787,7 @@ default values now explicitly stated")
                            max-date-time)))))
 
 (deftest test-every-13-months-2
-  (let [schedule { :every { :month 13 } :repeat { :day { :weekOfMonth 3 :dayOfWeek 5 } :hour 9 } }
+  (let [schedule { :every { :month 13 } :at { :day { :weekOfMonth 3 :dayOfWeek 5 } :hour 9 } }
         start-time (t/date-time 2015 4 10 20 57 16)
         current-time (t/date-time 2015 4 10 20 57 20)
         expected-times [(t/date-time 2015 4 17 9)

@@ -795,7 +795,7 @@
      (next-interval current-time schedule start-time max-date-time))
   ([current-time schedule start-time end-time]
      (let [interval-pattern (get schedule :every)
-           recurrence-pattern (get schedule :repeat)
+           recurrence-pattern (get schedule :at)
            first-hit (next-occurrence start-time recurrence-pattern)]
        (if (t/after? first-hit current-time)
          first-hit
@@ -823,7 +823,7 @@
            end-time (if (nil? end-time)
                       max-date-time
                       (zero-out-millis end-time))
-           recurrence (get schedule :repeat)
+           recurrence (get schedule :at)
            boundaries (get schedule :between)
            interval (get schedule :every)]
        (loop [time (t/plus current-time (t/seconds 1))]
