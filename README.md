@@ -16,6 +16,7 @@ Here is an example of a recurrence expression:
 Above expression means "every 10 seconds".  OK, "every 10 seconds" is
 a rather trivial pattern.  Here's a bit more complex example:
 
+
 ```json
 TBD
 ```
@@ -92,6 +93,7 @@ Recurrence expression is available in Maven central.
 
 If you use Maven, add this to your `pom.xml`:
 
+
 ```xml
 <dependency>
   <groupId>com.bjondinc</groupId>
@@ -103,11 +105,13 @@ If you use Maven, add this to your `pom.xml`:
 If you use Clojure and use Leiningen, add this to the `:dependencies`
 section of your `project.clj`:
 
+
 ```clojure
 [com.bjondinc/recurrence-expression "0.1.0"]
 ```
 
 Finally if you use gradle, add this under `dependencies`:
+
 
 ```gradle
 compile 'com.bjondinc:recurrence-expression:0.1.0'
@@ -144,8 +148,9 @@ TODO
 ## TODOs
 
 1. Finish README.md
+1. Timezone support within next-time function.
 1. Fix miscellaneous defects.
-1. Refine interface (Joda time, clj-time, and instance-pattern)
+1. Refine interface (Joda time, clj-time, and instance-pattern)?
 1. Support roll-over.
 1. Consider switching to Hubert for schema validation.
 1. Add test.check tests.
