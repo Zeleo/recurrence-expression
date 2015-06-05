@@ -391,10 +391,10 @@
     )
   )
 
-(deftest test-compute-fire-times-second
+(deftest test-next-n-times-second
   (let [schedule { :at  { :second [ 0 5 15 45 ] } }
         time (t/date-time 2025 6 15 12 30 30)
-        fire-times (compute-fire-times time schedule 5)]
+        fire-times (next-n-times time schedule 5)]
     (is (= (t/date-time 2025 6 15 12 30 45)
            (get fire-times 0)))
     (is (= (t/date-time 2025 6 15 12 31 0)
@@ -407,10 +407,10 @@
            (get fire-times 4)))
     ))
 
-(deftest test-compute-fire-times-minute
+(deftest test-next-n-times-minute
   (let [schedule { :at  { :minute [ 0 5 15 45 ] } }
         time (t/date-time 2025 6 15 12 30 30)
-        fire-times (compute-fire-times time schedule 5)]
+        fire-times (next-n-times time schedule 5)]
     (is (= (t/date-time 2025 6 15 12 45 0)
            (get fire-times 0)))
     (is (= (t/date-time 2025 6 15 13 0 0)
@@ -423,10 +423,10 @@
            (get fire-times 4)))
     ))
 
-(deftest test-compute-fire-times-hour
+(deftest test-next-n-times-hour
   (let [schedule { :at  { :hour [ 9 17 21 ] } }
         time (t/date-time 2025 6 15 12 30 30)
-        fire-times (compute-fire-times time schedule 6)]
+        fire-times (next-n-times time schedule 6)]
     (is (= 6 (count fire-times)))
     (is (= (t/date-time 2025 6 15 17 0 0)
            (get fire-times 0)))
@@ -442,10 +442,10 @@
            (get fire-times 5)))
     ))
 
-(deftest test-compute-fire-times-day
+(deftest test-next-n-times-day
   (let [schedule { :at  { :day [ 5 15 25 ] } }
         time (t/date-time 2025 6 15 12 30 30)
-        fire-times (compute-fire-times time schedule 6)]
+        fire-times (next-n-times time schedule 6)]
     (is (= 6 (count fire-times)))
     (is (= (t/date-time 2025 6 25 0 0 0)
            (get fire-times 0)))
@@ -461,10 +461,10 @@
            (get fire-times 5)))
     ))
 
-(deftest test-compute-fire-times-month
+(deftest test-next-n-times-month
   (let [schedule { :at  { :month [ 3 6 9 ] } }
         time (t/date-time 2025 6 15 12 30 30)
-        fire-times (compute-fire-times time schedule 6)]
+        fire-times (next-n-times time schedule 6)]
     (is (= 6 (count fire-times)))
     (is (= (t/date-time 2025 9 1 0 0 0)
            (get fire-times 0)))
@@ -480,11 +480,11 @@
            (get fire-times 5)))
     ))
 
-(deftest test-compute-fire-times-year
+(deftest test-next-n-times-year
   (let [schedule { :at  { :year [ 2026, 2027, 2031, 2040 ] } }
         time (t/date-time 2025 6 15 12 30 30)
         this-many-times 4
-        fire-times (compute-fire-times time schedule this-many-times)]
+        fire-times (next-n-times time schedule this-many-times)]
     (is (= this-many-times (count fire-times)))
     (is (= (t/date-time 2026 1 1 0 0 0)
            (get fire-times 0)))
@@ -496,14 +496,14 @@
            (get fire-times 3)))
     ))
 
-(deftest test-compute-fire-times-simple-mixed
+(deftest test-next-n-times-simple-mixed
   (let [schedule { :at  {
                              :hour [ 9 10 11 12 ]
                              :minute 30
                              } }
         time (t/date-time 2025 6 15 12 30 30)
         this-many-times 5
-        fire-times (compute-fire-times time schedule this-many-times)]
+        fire-times (next-n-times time schedule this-many-times)]
     (is (= this-many-times (count fire-times)))
     (is (= (t/date-time 2025 6 16 9 30 0)
            (get fire-times 0)))
@@ -527,7 +527,7 @@
                   }
         time (t/date-time 2025 6 15 12 30 30)
         this-many-times 7
-        fire-times (compute-fire-times time schedule this-many-times)]
+        fire-times (next-n-times time schedule this-many-times)]
     (is (= this-many-times (count fire-times)))
     (is (= (t/date-time 2025 6 15 13 10 0)
            (get fire-times 0)))
@@ -686,7 +686,7 @@ default values now explicitly stated")
            }
         start-time (t/date-time 2015 4 1)
         current-time (t/date-time 2015 4 22)
-        fire-times (compute-fire-times current-time s 3 start-time)]
+        fire-times (next-n-times current-time s 3 start-time)]
     #_(clojure.pprint/pprint fire-times)
     (is (= (t/date-time 2015 6 10 14 30 45)
            (get fire-times 0)))
@@ -701,7 +701,7 @@ default values now explicitly stated")
   (let [s { :every { :second 10 } }
         start-time (t/date-time 2015 4 1)
         current-time (t/date-time 2015 4 1 0 0 5)
-        fire-times (compute-fire-times current-time s 3 start-time)]
+        fire-times (next-n-times current-time s 3 start-time)]
     #_(clojure.pprint/pprint fire-times)
     (is (= (t/date-time 2015 4 1 0 0 10)
            (get fire-times 0)))
@@ -719,7 +719,7 @@ default values now explicitly stated")
            }
         start-time (t/date-time 2015 1 1)
         current-time (t/date-time 2015 4 22)
-        fire-times (compute-fire-times current-time s 3 start-time)]
+        fire-times (next-n-times current-time s 3 start-time)]
     #_(clojure.pprint/pprint fire-times)
     (is (= (t/date-time 2016 2 18 9 30)
            (get fire-times 0)))
@@ -781,7 +781,7 @@ default values now explicitly stated")
         current-time (t/plus start-time (t/seconds 2))
         expected-time (t/date-time 2015 4 17 0 0 0)]
     (is (= expected-time
-           (next-fire-time current-time
+           (next-time current-time
                            schedule
                            start-time
                            max-date-time)))))
@@ -795,6 +795,6 @@ default values now explicitly stated")
                        (t/date-time 2017 6 16 9)
                        (t/date-time 2018 7 20 9)
                        (t/date-time 2019 8 16 9)]
-        actual-times (compute-fire-times current-time schedule (count expected-times) start-time)]
+        actual-times (next-n-times current-time schedule (count expected-times) start-time)]
     (is (= expected-times actual-times)))
   )

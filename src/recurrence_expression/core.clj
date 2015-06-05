@@ -806,14 +806,14 @@
                                                         (to-period interval-pattern))))]
            next-one)))))
 
-(defn next-fire-time
+(defn next-time
   ([current-time schedule]
      (let [start-time min-date-time
            end-time max-date-time]
-       (next-fire-time current-time schedule start-time end-time)))
+       (next-time current-time schedule start-time end-time)))
   
   ([current-time schedule start-time]
-     (next-fire-time current-time schedule start-time max-date-time))
+     (next-time current-time schedule start-time max-date-time))
   
   ([current-time schedule start-time end-time]
      (let [current-time (zero-out-millis current-time)
@@ -832,17 +832,17 @@
          (let [t1 (if (nil? interval)
                            time
                            (next-interval time schedule start-time end-time))
-               next-fire-time (next-occurrence t1 recurrence)]
-           (if (included? next-fire-time boundaries)
-             next-fire-time
-             (recur (next-included-time next-fire-time boundaries))))))))
+               next-time (next-occurrence t1 recurrence)]
+           (if (included? next-time boundaries)
+             next-time
+             (recur (next-included-time next-time boundaries))))))))
 
-(defn compute-fire-times
+(defn next-n-times
   ([current-time schedule num-times]
      (let [start-time min-date-time]
-       (compute-fire-times current-time schedule num-times start-time max-date-time)))
+       (next-n-times current-time schedule num-times start-time max-date-time)))
   ([current-time schedule num-times start-time]
-     (compute-fire-times current-time schedule num-times start-time max-date-time))
+     (next-n-times current-time schedule num-times start-time max-date-time))
   ([current-time schedule num-times start-time end-time]
      (loop [n num-times
             fire-times []
@@ -850,8 +850,8 @@
        #_(println :n n :fire-times fire-times :current current)
        (if (= 0 n)
          fire-times
-         (let [next-fire-time (next-fire-time current schedule start-time end-time)]
+         (let [next-time (next-time current schedule start-time end-time)]
            (recur
             (dec n)
-            (conj fire-times next-fire-time)
-            next-fire-time))))))
+            (conj fire-times next-time)
+            next-time))))))

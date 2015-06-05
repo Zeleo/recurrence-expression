@@ -143,13 +143,14 @@ TODO
 
 ## TODOs
 
-1. rename :repeat --> :at
 1. Finish README.md
 1. Fix miscellaneous defects.
 1. Refine interface (Joda time, clj-time, and instance-pattern)
+1. Support roll-over.
 1. Consider switching to Hubert for schema validation.
 1. Add test.check tests.
 1. Consider switching to cheshire for JSON<-->Clojure translation.
+1. Support calendar.
 
 ## License
 
