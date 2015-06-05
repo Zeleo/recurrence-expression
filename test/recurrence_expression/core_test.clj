@@ -798,3 +798,18 @@ default values now explicitly stated")
         actual-times (next-n-times current-time schedule (count expected-times) start-time)]
     (is (= expected-times actual-times)))
   )
+
+(deftest test-leap-years
+  (let [exp { :at { :month 2 :day 29 } }
+        start-time (t/date-time 2015)
+        end-time (t/date-time 2030)
+        current-time start-time
+        expected-times [(t/date-time 2016 2 29)
+                        (t/date-time 2020 2 29)
+                        (t/date-time 2024 2 29)
+                        (t/date-time 2028 2 29)]
+        actual-times (next-n-times current-time exp (count expected-times)
+                                   start-time end-time)]
+    (is (= expected-times actual-times))))
+    
+

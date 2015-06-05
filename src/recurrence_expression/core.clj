@@ -669,23 +669,34 @@
 (defn next-month [current-time compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :month)
         current (t/month current-time)
-        next-value (next-value current pattern)]
-    (if (= next-value :roll-over)
-      [(t/plus (t/date-time (t/year current-time)
-                            1
-                            1
-                            0
-                            0
-                            0)
-               (t/years 1))
-       true]
-      [(t/date-time (t/year current-time)
-                    next-value
-                    (t/day current-time)
-                    (t/hour current-time)
-                    (t/minute current-time)
-                    (t/second current-time))
-       false])))
+        next-value (next-value current pattern)
+        year (t/year current-time)
+        day (t/day current-time)]
+    (cond
+     (= next-value :roll-over) [(t/plus (t/date-time year
+                                                     1
+                                                     1
+                                                     0
+                                                     0
+                                                     0)
+                                        (t/years 1))
+                                true]
+     (< (t/day (t/last-day-of-the-month year
+                                        next-value)) day) [(t/plus (t/date-time year
+                                                                                next-value
+                                                                                1
+                                                                                0
+                                                                                0
+                                                                                0)
+                                                                   (t/months 1))
+                                                           true]
+     :default [(t/date-time year
+                            next-value
+                            day
+                            (t/hour current-time)
+                            (t/minute current-time)
+                            (t/second current-time))
+               false])))
 
 (defn next-year [current-time compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :year)
