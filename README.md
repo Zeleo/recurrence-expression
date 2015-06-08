@@ -34,7 +34,7 @@ the following:
 1. Validation: Is this JSON a legal recurrence expression?  (Status: not fully
    implemented yet.)
 2. Calculation: Given a recurrence expression and time `t`, what is the next
-occurrence of the expression after time `t`?
+   occurrence of the expression after time `t`?
 3. Matching: Does this time match this recurrence expression?
    (Status: will be available very soon.)
 
@@ -58,7 +58,7 @@ Our sincere thanks for checking out this library.
 
 ## Rationale
 
-This project started out as a custom trigger for Quartz Scheduler.
+This project started out as a custom trigger for the Quartz Scheduler.
 Quartz comes with a handful of built-in triggers, but they did not
 satisfy all our scheduling needs.  So we decided to roll our own.  We
 used Clojure to implement the date calculation, and as a result it was
