@@ -1,7 +1,7 @@
 # recurrence-expression
 
 This library defines a JSON schema for expressing recurrence
-patterns.  It's a Java library but written in Clojure.
+patterns.  It's a Java library written in Clojure.
 
 Recurrence pattern is the pattern of date and time you establish when
 you say, for example, "Let's meet every Tuesday at 9:30am".  Recurrence 
@@ -32,10 +32,12 @@ Several functions are included in this library to validate and
 interpret recurrence expressions.  With these functions you can do
 these things:
 
-1. Validation: is this JSON a legal recurrence expression?
+1. Validation: is this JSON a legal recurrence expression?  (Status: not fully
+   implemented yet.)
 2. Calculation: Given a recurrence expression and time `t`, what is the next
 occurrence after time `t`?
 3. Matching: does this time matches this recurrence expression?
+   (Status: to be available very soon.)
 
 This project is written in Clojure, but we aim to serve the entire JVM
 community.  We provide a wrapper Java class to that end.  Most
@@ -43,15 +45,15 @@ functions are exposed through this wrapper class.
 
 There is also a sister library called "recurrence-trigger" that
 provides a custom trigger for Quartz Scheduler.  This Quartz trigger
-uses recurrence expression.
+uses recurrence expression.  (Status: we'll publish
+"recurrence-trigger" soon.)
 
 Recurrence expression aims to make it simple to say simple things
 while making it possible to say complex things.  We welcome your
-feedback, although we still need to figure out how to actually gather
-your feedback.  We'll follow up on this shortly.  Let us know if you
-have a real-life recurrence pattern you can describe in English but
-not supported by recurrence expression.  We'll review it and try to
-accommodate it.
+feedback.  Let us know if you have a real-life recurrence pattern you
+can describe in English but not supported by recurrence expression.
+We'll review it and try to accommodate it.  (Status: need to clarify
+contact info.)
 
 Our sincere thanks for checking out this library.
 
@@ -125,6 +127,7 @@ compile 'com.bjondinc:recurrence-expression:0.1.0'
 Recurrence-expression uses clj-time internally and currently requires you to use
 clj-time's `date-time` to specify a point in time.
 
+
 ```clojure
 ;; load libraries
 user> (require '[clj-time.core :as t])
@@ -136,10 +139,15 @@ user> (def start-time (t/date-time 2015 03 14))
 user> start-time
 #<DateTime 2015-03-14T00:00:00.000Z>
 
-user> (rc/next-fire-time (t/date-time 2015 03 14 9 26 53) { :every { :second 10 }} start-time)
+user> (rc/next-fire-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start-time)
 #<DateTime 2015-03-14T09:27:00.000Z>
 user>
 ```
+
+In above example, we use a Clojure map to represent a recurrence
+expression. (`{:every {:second 10}}`) It's because use clojure data
+structure internally when performing calculations.  
+
 ### Java
 
 TODO
@@ -150,16 +158,20 @@ TODO
 
 ## TODOs
 
-1. Finish README.md
-1. Timezone support within next-time function.
+1. Timezone support inside next-time function.
 1. Fix miscellaneous defects.
    1. Make sure end-time is respected.
+1. Implement matching functions.
+1. Finish validation functions.
+1. Test java wrapper classes.
+  1. Write Java section of README.md.
+1. Support roll-over (e.g., from 11pm to 2am next day).
+1. Implement Cron-like range and increment.
 1. Refine interface (Joda time, clj-time, and instance-pattern)?
-1. Support roll-over.
 1. Consider switching to Hubert for schema validation.
 1. Add test.check tests.
 1. Consider switching to cheshire for JSON<-->Clojure translation.
-1. Support calendar.
+1. Calendar support.
 
 ## License
 
