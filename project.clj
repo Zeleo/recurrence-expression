@@ -1,6 +1,7 @@
 (defproject com.bjondinc/recurrence-expression "0.1.0-SNAPSHOT"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
+  :scm "https://github.com/Bjond/recurrence-expression.git"
   :license {:name "GNU Lesser General Public License v3.0"
             :url "http://www.gnu.org/licenses/lgpl-3.0.txt"
             :year 2015
@@ -13,4 +14,8 @@
   :deploy-repositories [["releases" {:url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                                      :creds :gpg}
                          "snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"
-                                      :creds :gpg}]])
+                                      :creds :gpg}]]
+  :pom-addition [:developers [:developer
+                              [:name "Michi Oshima"]
+                              [:email "michi.oshima@bjondinc.com"]
+                              [:timezone "-5"]]])
