@@ -1,11 +1,11 @@
 # recurrence-expression
 
 This library defines a JSON schema for expressing recurrence
-patterns.  It's a Java library written in Clojure.
+patterns.  It is a Java library written in Clojure.
 
-Recurrence pattern is the pattern of date and time you establish when
-you say, for example, "Let's meet every Tuesday at 9:30am".  Recurrence 
-expression lets you specify these patterns in JSON.
+A recurrence pattern is a pattern of date and time that you establish when
+you say for example, "Let's meet every Tuesday at 9:30am".  A recurrence 
+expression lets you specify such patterns in JSON.
 
 Here is an example of a recurrence expression:
 
@@ -14,10 +14,8 @@ Here is an example of a recurrence expression:
 { "every": { "second": 10 } }
 ```
 
-Above expression means "every 10 seconds".
-
-OK, "every 10 seconds" is a rather trivial pattern.  Here's a bit more
-complex example:
+The above expression means "every 10 seconds", which is a rather trivial
+pattern.  Here's an example that is a bit more complex:
 
 
 ```json
@@ -26,18 +24,19 @@ complex example:
   "at": { "minute": [ 0, 15, 30, 45 ] } }
 ```
 
-Above means "Everybday between 9:30am to 5:30pm, every 15 minutes".
+The above expression means "every 15 minutes between 9:30am and 5:30pm, on
+every day".
 
 Several functions are included in this library to validate and
 interpret recurrence expressions.  With these functions you can do
-these things:
+the following:
 
-1. Validation: is this JSON a legal recurrence expression?  (Status: not fully
+1. Validation: Is this JSON a legal recurrence expression?  (Status: not fully
    implemented yet.)
 2. Calculation: Given a recurrence expression and time `t`, what is the next
-occurrence after time `t`?
-3. Matching: does this time matches this recurrence expression?
-   (Status: to be available very soon.)
+occurrence of the expression after time `t`?
+3. Matching: Does this time match this recurrence expression?
+   (Status: will be available very soon.)
 
 This project is written in Clojure, but we aim to serve the entire JVM
 community.  We provide a wrapper Java class to that end.  Most
@@ -45,15 +44,15 @@ functions are exposed through this wrapper class.
 
 There is also a sister library called "recurrence-trigger" that
 provides a custom trigger for Quartz Scheduler.  This Quartz trigger
-uses recurrence expression.  (Status: we'll publish
+uses recurrence expressions.  (Status: we will publish
 "recurrence-trigger" soon.)
 
-Recurrence expression aims to make it simple to say simple things
-while making it possible to say complex things.  We welcome your
+Using recurrence expressions makes it simple to say simple things
+while still making it possible to say complex things.  We welcome your
 feedback.  Let us know if you have a real-life recurrence pattern you
-can describe in English but not supported by recurrence expression.
-We'll review it and try to accommodate it.  (Status: need to clarify
-contact info.)
+can describe in English but is not supported by any recurrence expression.
+We will review it and try to accommodate it.  (Status: contact info
+pending.)
 
 Our sincere thanks for checking out this library.
 
@@ -63,10 +62,10 @@ This project started out as a custom trigger for Quartz Scheduler.
 Quartz comes with a handful of built-in triggers, but they did not
 satisfy all our scheduling needs.  So we decided to roll our own.  We
 used Clojure to implement the date calculation, and as a result it was
-easy to separate this project out from the parts that interfaces with
+easy to separate this project out from the parts that interface with
 Quartz.
 
-We aren't the absolute experts on schedulers and recurrences.
+We aren't the absolute authority on schedulers and recurrences.
 However, we are aware of two main exemplars in computer software for
 specifying recurrence patterns:
 
@@ -74,27 +73,27 @@ specifying recurrence patterns:
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 
 Scheduling software tools and libraries seem to use either a variant
-of cron expression or follow a similar approach to Outlook recurrence
-pattern.
+of Cron expression or use similar approach to Outlook for recurrence
+patterns.
 
 To be sure, both Cron and Outlook have a lot of happy users.  Each
-of them individually cover most recurrence patterns we want to
+of them individually cover most recurrence patterns that we want to
 express.
 
-There are, however, some edge-case patterns neither Cron or Outlook
+There are, however, some edge-case patterns that neither Cron nor Outlook
 can express.  Also, there are some patterns that can be expressed in
 Outlook but not in Cron, and vice versa.
 
-Recurrence expression is a superset of Cron expression and Outlook's
-recurrence pattern.  It is also capable of expressing patterns that
-neither Cron nor Outlook can express.  A bit verbose, we admit, but
-it's also a lot more readable than, say, `59 11 * * 1-5`.
+Recurrence expressions are a superset of Cron expressions and Outlook's
+recurrence patterns.  They are also capable of expressing patterns that
+neither Cron nor Outlook can express.  They are a bit verbose, we admit,
+but they are also a lot more readable than say, `59 11 * * 1-5`.
 
 ## Usage
 
 ### Installation
 
-Recurrence expression is available in Maven central.
+Recurrence Expression is available in Maven central.
 
 If you use Maven, add this to your `pom.xml`:
 
@@ -107,7 +106,7 @@ If you use Maven, add this to your `pom.xml`:
 </dependency>
 ```
 
-If you use Clojure and use Leiningen, add this to the `:dependencies`
+If you use Clojure and Leiningen, add this to the `:dependencies`
 section of your `project.clj`:
 
 
@@ -124,8 +123,8 @@ compile 'com.bjondinc:recurrence-expression:0.1.0'
 
 ### Clojure
 
-Recurrence expression uses clj-time internally and currently requires you to use
-clj-time's `date-time` to specify a point in time.
+Recurrence Expression uses clj-time internally and currently requires you to
+use clj-time's `date-time` to specify a point in time.
 
 
 ```clojure
@@ -144,9 +143,9 @@ user> (rc/next-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start
 user>
 ```
 
-In above example, we use a Clojure map to represent a recurrence
-expression. (In particular: `{:every {:second 10}}`.) It's because use clojure data
-structure internally when performing calculations.  
+In the above example, we use a Clojure map to represent a recurrence
+expression. (Specifically: `{:every {:second 10}}`.) It is because we use
+a Clojure data structure internally when performing calculations.
 
 ### Java
 
