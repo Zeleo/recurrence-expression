@@ -145,7 +145,7 @@ user>
 ```
 
 In above example, we use a Clojure map to represent a recurrence
-expression. (`{:every {:second 10}}`) It's because use clojure data
+expression. (In particular: `{:every {:second 10}}`.) It's because use clojure data
 structure internally when performing calculations.  
 
 ### Java
