@@ -12,9 +12,9 @@
                  [prismatic/schema "0.4.0"]
                  [org.clojure/data.json "0.2.6"]]
   :deploy-repositories [["releases" {:url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                                     :creds :gpg}
-                         "snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"
-                                      :creds :gpg}]]
+                                     :creds :gpg}]
+                         ["snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"
+                                       :creds :gpg}]]
   :pom-addition [:developers [:developer
                               [:name "Michi Oshima"]
                               [:email "michi.oshima@bjondinc.com"]
