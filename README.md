@@ -139,7 +139,7 @@ user> (def start-time (t/date-time 2015 03 14))
 user> start-time
 #<DateTime 2015-03-14T00:00:00.000Z>
 
-user> (rc/next-fire-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start-time)
+user> (rc/next-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start-time)
 #<DateTime 2015-03-14T09:27:00.000Z>
 user>
 ```
