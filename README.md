@@ -161,23 +161,6 @@ TODO
 
 TODO
 
-## TODOs
-
-1. Timezone support inside next-time function.
-1. Fix miscellaneous defects.
-   1. Make sure end-time is respected.
-1. Implement matching functions.
-1. Finish validation functions.
-1. Test java wrapper classes.
-  1. Write Java section of README.md.
-1. Support roll-over (e.g., from 11pm to 2am next day).
-1. Implement Cron-like range and increment.
-1. Refine interface (Joda time, clj-time, and instance-pattern)?
-1. Consider switching to Hubert for schema validation.
-1. Add test.check tests.
-1. Consider switching to cheshire for JSON<-->Clojure translation.
-1. Calendar support.
-
 ## License
 
 Copyright &copy; 2015 Bjönd, Inc.
