@@ -5,7 +5,7 @@ patterns.  It is a Java library written in Clojure.
 
 A recurrence pattern is a pattern of date and time that you establish when
 you say for example, "Let's meet every Tuesday at 9:30am".  A recurrence 
-expression lets you specify such patterns in JSON.
+expression lets you specify such patterns in [JSON](http://json.org).
 
 Here is an example of a recurrence expression:
 
@@ -19,9 +19,15 @@ pattern.  Here's an example that is a bit more complex:
 
 
 ```json
-{ "between": { "from": { "hour": 9, "minute": 30 },
-               "to": { "hour": 5, "minute": 30 } },
-  "at": { "minute": [ 0, 15, 30, 45 ] } }
+{
+  "between": {
+    "from": { "hour": 9, "minute": 30 },
+    "to": { "hour": 5, "minute": 30 }
+  },
+  "at": {
+    "minute": [ 0, 15, 30, 45 ]
+  }
+}
 ```
 
 The above expression means "every 15 minutes between 9:30am and 5:30pm, on
@@ -31,11 +37,11 @@ Several functions are included in this library to validate and
 interpret recurrence expressions.  With these functions you can do
 the following:
 
-1. Validation: Is this JSON a legal recurrence expression?  (Status: not fully
+1. Validate: Is this JSON a legal recurrence expression?  (Status: not fully
    implemented yet.)
-2. Calculation: Given a recurrence expression and time `t`, what is the next
+2. Calculate: Given a recurrence expression and time `t`, what is the next
    occurrence of the expression after time `t`?
-3. Matching: Does this time match this recurrence expression?
+3. Match: Does this time match this recurrence expression?
    (Status: will be available very soon.)
 
 This project is written in Clojure, but we aim to serve the entire JVM
@@ -58,12 +64,12 @@ Our sincere thanks for checking out this library.
 
 ## Rationale
 
-This project started out as a custom trigger for the Quartz Scheduler.
-Quartz comes with a handful of built-in triggers, but they did not
-satisfy all our scheduling needs.  So we decided to roll our own.  We
-used Clojure to implement the date calculation, and as a result it was
-easy to separate this project out from the parts that interface with
-Quartz.
+This project started out as a custom trigger for the
+[Quartz Scheduler](http://quartz-scheduler.org).  Quartz comes with a
+handful of built-in triggers, but they did not satisfy all our
+scheduling needs.  So we decided to roll our own.  We used Clojure to
+implement the date calculation, and as a result it was easy to
+separate this project from the parts that interface with Quartz.
 
 We aren't the absolute authority on schedulers and recurrences.
 However, we are aware of two main exemplars in computer software for
@@ -76,8 +82,8 @@ Scheduling software tools and libraries seem to use either a variant
 of Cron expression or use similar approach to Outlook for recurrence
 patterns.
 
-To be sure, both Cron and Outlook have a lot of happy users.  Each
-of them individually cover most recurrence patterns that we want to
+To be sure, both Cron and Outlook have a lot of happy users.  Each of
+them individually covers most recurrence patterns that we want to
 express.
 
 There are, however, some edge-case patterns that neither Cron nor Outlook
