@@ -26,7 +26,7 @@ complex example:
   "at": { "minute": [ 0, 15, 30, 45 ] } }
 ```
 
-Above means "Everybday between 9:30am to 5:30pm, every 15 minutes".
+Above means "Every day between 9:30am to 5:30pm, every 15 minutes".
 
 Several functions are included in this library to validate and
 interpret recurrence expressions.  With these functions you can do
@@ -36,7 +36,7 @@ these things:
    implemented yet.)
 2. Calculation: Given a recurrence expression and time `t`, what is the next
 occurrence after time `t`?
-3. Matching: does this time matches this recurrence expression?
+3. Matching: does this time matche this recurrence expression?
    (Status: to be available very soon.)
 
 This project is written in Clojure, but we aim to serve the entire JVM
@@ -59,7 +59,7 @@ Our sincere thanks for checking out this library.
 
 ## Rationale
 
-This project started out as a custom trigger for Quartz Scheduler.
+This project started out as a custom trigger for the Quartz Scheduler.
 Quartz comes with a handful of built-in triggers, but they did not
 satisfy all our scheduling needs.  So we decided to roll our own.  We
 used Clojure to implement the date calculation, and as a result it was
@@ -81,7 +81,7 @@ To be sure, both Cron and Outlook have a lot of happy users.  Each
 of them individually cover most recurrence patterns we want to
 express.
 
-There are, however, some edge-case patterns neither Cron or Outlook
+There are, however, some edge-case patterns neither Cron nor Outlook
 can express.  Also, there are some patterns that can be expressed in
 Outlook but not in Cron, and vice versa.
 
