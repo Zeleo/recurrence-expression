@@ -49,7 +49,8 @@ community.  We provide a wrapper Java class to that end.  Most
 functions are exposed through this wrapper class.
 
 There is also a sister library called "recurrence-trigger" that
-provides a custom trigger for Quartz Scheduler.  This Quartz trigger
+provides a custom trigger for the
+[Quartz Scheduler](http://quartz-scheduler.org).  This Quartz trigger
 uses recurrence expressions.  (Status: we will publish
 "recurrence-trigger" soon.)
 
@@ -64,12 +65,12 @@ Our sincere thanks for checking out this library.
 
 ## Rationale
 
-This project started out as a custom trigger for the
-[Quartz Scheduler](http://quartz-scheduler.org).  Quartz comes with a
-handful of built-in triggers, but they did not satisfy all our
-scheduling needs.  So we decided to roll our own.  We used Clojure to
-implement the date calculation, and as a result it was easy to
-separate this project from the parts that interface with Quartz.
+This project started out as a custom trigger for the Quartz Scheduler.
+Quartz comes with a handful of built-in triggers, but they did not
+satisfy all our scheduling needs.  So we decided to roll our own.  We
+used Clojure to implement the date calculation, and as a result it was
+easy to separate this project from the parts that interface with
+Quartz.
 
 We aren't the absolute authority on schedulers and recurrences.
 However, we are aware of two main exemplars in computer software for
