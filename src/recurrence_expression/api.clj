@@ -4,7 +4,9 @@
   (:require [recurrence-expression.data :refer :all])
   (:gen-class :name com.bjondinc.RecurrenceExpression
               :prefix method-
-              :methods [[nextTime [org.joda.time.DateTime String] org.joda.time.DateTime]]))
+              :main false
+              :methods [#^{:static true}
+                        [nextTime [org.joda.time.DateTime String] org.joda.time.DateTime]]))
 
 (defn method-nextTime
   [current-time pattern-string]
