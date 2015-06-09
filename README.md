@@ -130,8 +130,10 @@ compile 'com.bjondinc:recurrence-expression:0.1.0'
 
 ### Clojure
 
-Recurrence Expression uses clj-time internally and currently requires you to
-use clj-time's `date-time` to specify a point in time.
+Recurrence Expression uses
+[clj-time](https://github.com/clj-time/clj-time) internally and
+currently requires you to use clj-time's `date-time` to specify a
+point in time.
 
 
 ```clojure
