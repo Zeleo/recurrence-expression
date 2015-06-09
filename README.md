@@ -58,7 +58,7 @@ The design goal of recurrence expressions is to makes it simple to say
 simple things while still making it possible to say complex things.
 We welcome your feedback.  Let us know if you have a real-life
 recurrence pattern you can describe in English but is not supported by
-any recurrence expression.  We will review it and try to accommodate
+the recurrence expression syntax.  We will review it and try to accommodate
 it.  (Status: contact info pending.)
 
 Our sincere thanks for checking out this library.
