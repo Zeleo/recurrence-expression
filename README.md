@@ -158,7 +158,49 @@ a Clojure data structure internally when performing calculations.
 
 ### Java
 
-TODO
+```java
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.junit.Test;
+
+import com.bjondinc.RecurrenceExpression;
+
+public class RecurrenceExpressionTests {
+
+	@Test
+	public void testNextTime() {
+		
+		/*
+		 * The expression below says "Every 5 minutes, at 30 seconds".
+		 * The start time is set to 6/9/2015 at 4pm.  
+		 * 
+		 * The expression and the start time evaluate to the following sequence:
+		 * 
+		 *   [ 16:05:30, 16:10:30, 16:15:30, ... ]
+		 * 
+		 */
+		String expression = "{ \"every\": { \"minute\": 5 }, \"at\": { \"second\": 30 } }";
+		DateTime startTime = new DateTime(2015, 6, 9, 16, 0, 0, DateTimeZone.UTC);
+
+		/*
+		 * Given the current time of 6/9/2015 at 4:43:15pm, ...
+		 */
+		DateTime currentTime = new DateTime(2015, 6, 9, 16, 43, 15, DateTimeZone.UTC);
+
+		/*
+		 * ... what is the next time in the sequence?
+		 */
+		DateTime actual = RecurrenceExpression.nextTime(currentTime, expression, startTime);
+		
+		/*
+		 * It should be 4:45:30pm.
+		 */
+		DateTime expected = new DateTime(2015, 6, 9, 16, 45, 30, DateTimeZone.UTC);
+		
+		assertEquals(expected, actual);
+	}
+}
+```
 
 ## Example Expressions
 
