@@ -1,4 +1,4 @@
-(defproject com.bjondinc/recurrence-expression "0.1.0"
+(defproject com.bjondinc/recurrence-expression "0.1.1"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
   :scm "https://github.com/Bjond/recurrence-expression.git"
@@ -6,6 +6,7 @@
             :url "http://www.gnu.org/licenses/lgpl-3.0.txt"
             :year 2015
             :key "lgpl-3.0"}
+  :plugins [[lein-aot-filter "0.1.0"]]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [clj-time "0.8.0"]
@@ -18,4 +19,6 @@
   :pom-addition [:developers [:developer
                               [:name "Michi Oshima"]
                               [:email "michi.oshima@bjondinc.com"]
-                              [:timezone "-5"]]])
+                              [:timezone "-5"]]]
+  :aot :all
+  :aot-include [#"^com.*"])

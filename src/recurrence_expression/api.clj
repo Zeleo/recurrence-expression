@@ -9,4 +9,4 @@
 (defn method-nextTime
   [current-time pattern-string]
   (let [pattern (from-json pattern-string)]
-    (next-fire-time current-time pattern)))
+    (next-n-times current-time pattern)))

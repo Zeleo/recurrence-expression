@@ -109,7 +109,7 @@ If you use Maven, add this to your `pom.xml`:
 <dependency>
   <groupId>com.bjondinc</groupId>
   <artifactId>recurrence-expression</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
@@ -118,14 +118,14 @@ section of your `project.clj`:
 
 
 ```clojure
-[com.bjondinc/recurrence-expression "0.1.0"]
+[com.bjondinc/recurrence-expression "0.1.1"]
 ```
 
 Finally if you use gradle, add this under `dependencies`:
 
 
 ```gradle
-compile 'com.bjondinc:recurrence-expression:0.1.0'
+compile 'com.bjondinc:recurrence-expression:0.1.1'
 ```
 
 ### Clojure
