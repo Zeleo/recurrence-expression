@@ -1,4 +1,4 @@
-# recurrence-expression
+# Recurrence Expression
 
 This library defines a JSON schema for expressing recurrence
 patterns.  It is a Java library written in Clojure.
