@@ -128,35 +128,12 @@ Finally if you use gradle, add this under `dependencies`:
 compile 'com.bjondinc:recurrence-expression:0.1.1'
 ```
 
-### Clojure
-
-Recurrence Expression uses
-[clj-time](https://github.com/clj-time/clj-time) internally and
-currently requires you to use clj-time's `date-time` to specify a
-point in time.
-
-
-```clojure
-;; load libraries
-user> (require '[clj-time.core :as t])
-user> (require '[recurrence-expression.core :as rc])
-
-;; ":every" clause requires a start-time.
-user> (def start-time (t/date-time 2015 03 14))
-#'user/start-time
-user> start-time
-#<DateTime 2015-03-14T00:00:00.000Z>
-
-user> (rc/next-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start-time)
-#<DateTime 2015-03-14T09:27:00.000Z>
-user>
-```
-
-In the above example, we use a Clojure map to represent a recurrence
-expression. (Specifically: `{:every {:second 10}}`.) It is because we use
-a Clojure data structure internally when performing calculations.
-
 ### Java
+
+Recurrence Expression relies on
+[Joda-Time](http://www.joda.org/joda-time/) for date-time calculations
+and requires you to use Joda-Time's `DateTime` object to specify a
+point in time.
 
 ```java
 import org.joda.time.DateTime;
@@ -201,6 +178,34 @@ public class RecurrenceExpressionTests {
 	}
 }
 ```
+
+### Clojure
+
+Recurrence Expression uses
+[clj-time](https://github.com/clj-time/clj-time) internally and
+currently requires you to use clj-time's `date-time` to specify a
+point in time.
+
+
+```clojure
+;; load libraries
+user> (require '[clj-time.core :as t])
+user> (require '[recurrence-expression.core :as rc])
+
+;; ":every" clause requires a start-time.
+user> (def start-time (t/date-time 2015 03 14))
+#'user/start-time
+user> start-time
+#<DateTime 2015-03-14T00:00:00.000Z>
+
+user> (rc/next-time (t/date-time 2015 03 14 9 26 53) {:every {:second 10}} start-time)
+#<DateTime 2015-03-14T09:27:00.000Z>
+user>
+```
+
+In the above example, we use a Clojure map to represent a recurrence
+expression. (Specifically: `{:every {:second 10}}`.) It is because we use
+a Clojure data structure internally when performing calculations.
 
 ## Example Expressions
 
