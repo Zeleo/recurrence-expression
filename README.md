@@ -73,28 +73,39 @@ easy to separate this project from the parts that interface with
 Quartz.
 
 We aren't the absolute authority on schedulers and recurrences.
-However, we are aware of two main exemplars in computer software for
+However, we are aware of three main exemplars in computer software for
 specifying recurrence patterns:
 
 1. [Crontab for Cron](http://crontab.org)
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
+3. [Recurrence Rule in RFC 2445 (iCal)](https://www.ietf.org/rfc/rfc2445.txt)
 
-Scheduling software tools and libraries seem to use either a variant
-of Cron expression or use similar approach to Outlook for recurrence
-patterns.
+All scheduling software tools and libraries seem similar to, or draw ideas
+from, one of above examplars.
 
-To be sure, both Cron and Outlook have a lot of happy users.  Each of
-them individually covers most recurrence patterns that we want to
-express.
+Of the three, RFC 2445 offers the most comprehensive way to specify
+recurrence patterns.  However, we could not find a usable
+implementation of it.  We have seen one or two implementations of the
+recurrence rule of RFC 2445, but none of them implements the
+specification entirely.  A notable example of this is
+[google-rfc-2445](https://code.google.com/p/google-rfc-2445/), which
+does not support recurrence patterns finer than daily frequencies.
 
-There are, however, some edge-case patterns that neither Cron nor Outlook
-can express.  Also, there are some patterns that can be expressed in
-Outlook but not in Cron, and vice versa.
+Both Cron and Outlook have a lot of happy users.  However, they are
+not as comprehensive as RFC 2445.  Recurrence rules can express
+patterns that neither Cron nor Outlook can express.  Also, there are
+some patterns that can be expressed in Outlook but not in Cron, and
+vice versa.
 
-Recurrence expressions are a superset of Cron expressions and Outlook's
-recurrence patterns.  They are also capable of expressing patterns that
-neither Cron nor Outlook can express.  They are a bit verbose, we admit,
-but they are also a lot more readable than say, `59 11 * * 1-5`.
+Recurrence expressions are a superset of Cron expressions and
+Outlook's recurrence patterns.  It is very similar to recurrence rules
+described in RFC 2445, aside from obvious syntactical differences.
+
+So why didn't we just implement RFC 2445?  To be honest, we wrote the
+code *before* we knew about RFC 2445.  But then again, We believe
+JSON, the underlying syntax of recurrence expressions, to be far
+easier to manipulate programmatically for both the producer and the
+consumer.
 
 ## Usage
 
