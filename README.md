@@ -80,8 +80,8 @@ specifying recurrence patterns:
 2. [RecurrencePattern in Microsoft Outlook Calendar](https://msdn.microsoft.com/en-us/library/microsoft.office.interop.outlook.recurrencepattern(v=office.15).aspx).
 3. [Recurrence Rule in RFC 2445 (iCal)](https://www.ietf.org/rfc/rfc2445.txt)
 
-All scheduling software tools and libraries seem similar to, or draw ideas
-from, one of above examplars.
+All scheduling software tools and libraries seem similar to or draw ideas
+from one of above examplars.
 
 Of the three, RFC 2445 offers the most comprehensive way to specify
 recurrence patterns.  However, we could not find a usable
@@ -98,12 +98,12 @@ some patterns that can be expressed in Outlook but not in Cron, and
 vice versa.
 
 Recurrence expressions are a superset of Cron expressions and
-Outlook's recurrence patterns.  It is very similar to recurrence rules
+Outlook's recurrence patterns.  They are similar to recurrence rules
 described in RFC 2445, aside from obvious syntactical differences.
 
 So why didn't we just implement RFC 2445?  To be honest, we wrote the
-code *before* we knew about RFC 2445.  But then again, We believe
-JSON, the underlying syntax of recurrence expressions, to be far
+code before we knew about RFC 2445.  Additionally, we believe
+JSON (the underlying syntax of recurrence expressions) to be far
 easier to manipulate programmatically for both the producer and the
 consumer.
 
