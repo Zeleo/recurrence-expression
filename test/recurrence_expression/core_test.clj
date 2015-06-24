@@ -824,3 +824,18 @@ default values now explicitly stated")
         actual-times (next-n-times current-time exp (count expected-times)
                                    start-time end-time)]
     (is (= expected-times actual-times))))
+
+(deftest test-end-time
+  (let [exp { :at { :month 2 :day 28 } }
+        start-time (t/date-time 2015)
+        end-time (t/date-time 2017 12 31)
+        current-time start-time
+        expected-times [(t/date-time 2015 2 28)
+                        (t/date-time 2016 2 28)
+                        (t/date-time 2017 2 28)]
+        actual-times (next-n-times current-time exp (+ 2 (count expected-times))
+                                   start-time end-time)]
+    ;; we told next-n-times to return two more than expected-times,
+    ;; but it correctly returns the expected-times.  It's because of
+    ;; end-time.
+    (is (= expected-times actual-times))))

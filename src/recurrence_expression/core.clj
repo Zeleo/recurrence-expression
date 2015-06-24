@@ -838,15 +838,19 @@
            boundaries (get schedule :between)
            interval (get schedule :every)]
        (loop [time (t/plus current-time (t/seconds 1))]
-         (if (t/after? time max-date-time)
-           (throw (Exception. "Maximum time reached")))
-         (let [t1 (if (nil? interval)
-                           time
-                           (next-interval time schedule start-time end-time))
-               next-time (next-occurrence t1 recurrence)]
-           (if (included? next-time boundaries)
-             next-time
-             (recur (next-included-time next-time boundaries))))))))
+         (if (or (t/after? time end-time)
+                 (t/after? time max-date-time))
+           nil
+           (let [t1 (if (nil? interval)
+                      time
+                      (next-interval time schedule start-time end-time))
+                 next-time (next-occurrence t1 recurrence)]
+             (if (or (t/after? next-time end-time)
+                     (t/after? next-time max-date-time))
+               nil
+               (if (included? next-time boundaries)
+                 next-time
+                 (recur (next-included-time next-time boundaries))))))))))
 
 (defn next-n-times
   ([current-time schedule num-times]
@@ -862,7 +866,9 @@
        (if (= 0 n)
          fire-times
          (let [next-time (next-time current schedule start-time end-time)]
-           (recur
-            (dec n)
-            (conj fire-times next-time)
-            next-time))))))
+           (if (nil? next-time)
+             fire-times
+             (recur
+              (dec n)
+              (conj fire-times next-time)
+              next-time)))))))
