@@ -34,7 +34,7 @@
   ([current-time pattern-string start-time]
      (let [pattern (from-json pattern-string)]
        (next-time current-time pattern start-time)))
-  ([current-time pattern-string num-times start-time end-time]
+  ([current-time pattern-string start-time end-time]
      (let [pattern (from-json pattern-string)]
        (next-time current-time pattern start-time end-time))))
 
