@@ -6,15 +6,57 @@
   (:import (clojure.lang ExceptionInfo))
   (:import (com.bjondinc RecurrenceExpression)))
 
+;;; Note, I'm simply testing here if the calls to java wrapper
+;;; succeeds or not.
+
 (deftest test-java-api-basic
   (let [schedule
-        "{ \"every\": { \"month\": 13 },
-           \"at\": { \"day\": { \"weekOfMonth\": 3, \"dayOfWeek\": 5 } } }"
-        start-time (t/date-time 2015 4 14 10 35 39)
-        current-time (t/plus start-time (t/seconds 2))
-        expected-time (t/date-time 2015 4 17 0 0 0)]
-    (is (= expected-time
-           (RecurrenceExpression/nextTime current-time
-                           schedule
-                           start-time
-                           max-date-time)))))
+        "{ \"at\": { \"day\": 5 } }"
+        start-time (t/date-time 2015 4)
+        end-time (t/date-time 2015 7)
+        current-time (t/plus start-time (t/seconds 1))]
+    
+    (let [expected-time (t/date-time 2015 4 5)]
+      (let [result (RecurrenceExpression/nextTime current-time
+                                                  schedule)]
+        (is (= expected-time
+               result)))
+      
+      (let [result (RecurrenceExpression/nextTime current-time
+                                                  schedule
+                                                  start-time)]
+        (is (= expected-time
+               result)))
+      
+      (let [result (RecurrenceExpression/nextTime current-time
+                                                  schedule
+                                                  start-time
+                                                  end-time)]
+        (is (= expected-time
+               result)))
+      )
+
+    (let [expected-times [(t/date-time 2015 4 5)
+                          (t/date-time 2015 5 5)]]
+      (let [result (RecurrenceExpression/nextNTimes current-time
+                                                    schedule
+                                                    2)]
+        (is (= expected-times
+               result)))
+      
+      (let [result (RecurrenceExpression/nextNTimes current-time
+                                                    schedule
+                                                    2
+                                                    start-time)]
+        (is (= expected-times
+               result)))
+      
+      (let [result (RecurrenceExpression/nextNTimes current-time
+                                                    schedule
+                                                    2
+                                                    start-time
+                                                    end-time)]
+        (is (= expected-times
+               result)))
+      )
+    ))
