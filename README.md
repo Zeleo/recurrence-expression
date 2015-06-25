@@ -83,8 +83,8 @@ specifying recurrence patterns:
 All scheduling software tools and libraries seem similar to or draw ideas
 from one of above examplars.
 
-Of the three, RFC 2445 offers the most comprehensive way to specify
-recurrence patterns.  However, we could not find a usable
+Of the above three items, RFC 2445 offers the most comprehensive way
+to specify recurrence patterns.  However, we could not find a usable
 implementation of it.  We have seen one or two implementations of the
 recurrence rule of RFC 2445, but none of them implements the
 specification entirely.  A notable example of this is
@@ -92,20 +92,24 @@ specification entirely.  A notable example of this is
 does not support recurrence patterns finer than daily frequencies.
 
 Both Cron and Outlook have a lot of happy users.  However, they are
-not as comprehensive as RFC 2445.  Recurrence rules can express
-patterns that neither Cron nor Outlook can express.  Also, there are
-some patterns that can be expressed in Outlook but not in Cron, and
-vice versa.
+not very comprehensive.  There are some patterns that can be expressed
+in Outlook but not in Cron, and vice versa.  RFC 2445's recurrence
+rules subsume what can be expressed by both Cron and Outlook in that
+they can express patterns that neither Cron nor Outlook can express.
 
-Recurrence expressions are a superset of Cron expressions and
-Outlook's recurrence patterns.  They are similar to recurrence rules
-described in RFC 2445, aside from obvious syntactical differences.
+Recurrence expressions, like RFC 2445's recurrence rules, are a
+superset of Cron expressions and Outlook's recurrence patterns.
+Recurrence expressions and recurrence rules are very similar despite
+the obvious syntactical differences.
 
 So why didn't we just implement RFC 2445?  To be honest, we wrote the
-code before we knew about RFC 2445.  Additionally, we believe
-JSON (the underlying syntax of recurrence expressions) to be far
-easier to manipulate programmatically for both the producer and the
-consumer.
+code before we even knew about RFC 2445.  But we also believe our
+choice of JSON as the underlying syntax for recurrence expressions was
+a good one.  JSON is far easier to manipulate programmatically for
+both the producer and the consumer.  We do believe there should be
+interoperability between recurrence expressions and RFC 2445.  No
+promises, but we plan to translation between recurrence rules and
+recurrence expressions in the future.
 
 ## Usage
 
