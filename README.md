@@ -1,7 +1,8 @@
 # Recurrence Expression
 
-This library defines a JSON schema for expressing recurrence
-patterns.  It is a Java library written in Clojure.
+This library defines a JSON schema for expressing recurrence patterns.
+It is a Java library written in Clojure.  It relies on
+[Joda-Time](http://www.joda.org/joda-time/) for date calculations.
 
 A recurrence pattern is a pattern of date and time that you establish when
 you say for example, "Let's meet every Tuesday at 9:30am".  A recurrence 
@@ -145,8 +146,7 @@ compile 'com.bjondinc:recurrence-expression:0.1.1'
 
 ### Java
 
-Recurrence Expression relies on
-[Joda-Time](http://www.joda.org/joda-time/) for date-time calculations
+Recurrence Expression relies on Joda-Time for date-time calculations
 and requires you to use Joda-Time's `DateTime` object to specify a
 point in time.
 
