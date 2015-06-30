@@ -77,19 +77,28 @@
   (let [mil (t/milli dt)]
     (t/minus dt (t/millis mil))))
 
-(defn nth-week [year month n dayOfWeek]
-  ;; 1 <= n <= 5
+(defn nth-week [year month n day-of-week]
+  ;; 1 <= n <= 5 or :last
   ;; may return nil if no such day exists in a month
   (let [first-day (t/first-day-of-the-month year month)
-        first-day-of-week (t/day-of-week first-day)
-        diff (if (<= first-day-of-week dayOfWeek)
-               (- dayOfWeek first-day-of-week)
-               (+ (- 7 first-day-of-week) dayOfWeek))
-        first-dayOfWeek (t/plus first-day (t/days diff))
-        nth-dayOfWeek (t/plus first-dayOfWeek (t/weeks (dec n)))]
-    (if (= month (t/month nth-dayOfWeek))
-      nth-dayOfWeek
+        dow-of-first-day (t/day-of-week first-day)
+        diff (if (<= dow-of-first-day day-of-week)
+               (- day-of-week dow-of-first-day)
+               (+ (- 7 dow-of-first-day) day-of-week))
+        first-day-of-week (t/plus first-day (t/days diff))
+        nth-day-of-week (t/plus first-day-of-week (t/weeks (dec n)))]
+    (if (= month (t/month nth-day-of-week))
+      nth-day-of-week
       nil)))
+
+(defn last-day-of-week [year month day-of-week]
+  (let [last-day (t/last-day-of-the-month year month)
+        dow-of-last-day (t/day-of-week last-day)
+        diff (if (>= dow-of-last-day day-of-week)
+               (- dow-of-last-day day-of-week)
+               (+ dow-of-last-day (- 7 day-of-week)))
+        last-day-of-week (t/minus last-day (t/days diff))]
+    last-day-of-week))
 
 (defn previous-nth-week [base-time n day-of-week]
   (if (> n 5)
