@@ -156,7 +156,7 @@
   (let [base-time (t/date-time 2015 3 28 13 27 45)]
       (is (= (t/date-time 2015 1 29 0 0 0)
              (previous base-time { :day 29  }))
-          "month rolling back twice because 2/29 does not exist")))
+          "month rolling back twice because 2/29/2015 does not exist")))
 
 (deftest test-next-instant
   (let [base-time (t/date-time 2015 3 18 13 27 45)]
@@ -873,3 +873,48 @@ default values now explicitly stated")
     ;; but it correctly returns the expected-times.  It's because of
     ;; end-time.
     (is (= expected-times actual-times))))
+
+(deftest test-last-keyword-day-of-month
+  (let [expr { :day :last }
+        t (t/date-time 2015 7 7 10 36)
+        expected-next (t/date-time 2015 7 31)
+        expected-previous (t/date-time 2015 6 30)
+        actual-next (next-instant t expr)
+        actual-previous (previous t expr)]
+    (is (= expected-next
+           (next-instant t expr)))
+    (is (= expected-previous
+           (previous t expr)))))
+
+(deftest test-last-keyword-day-of-month-2
+  (let [expr { :at { :day :last } }
+        t (t/date-time 2015 2 14)
+        expected [(t/date-time 2015 3 31)
+                  (t/date-time 2015 4 30)
+                  (t/date-time 2015 5 31)
+                  (t/date-time 2015 6 30)]]
+    (is expected
+        (next-n-times t expr (count expected)))))
+
+(deftest test-last-keyword-week-of-month
+  (let [expr { :day { :dayOfWeek 3, :weekOfMonth :last } }
+        t (t/date-time 2015 7 7 10 36)
+        expected-next (t/date-time 2015 7 29)
+        expected-previous (t/date-time 2015 6 24)
+        actual-next (next-instant t expr)
+        actual-previous (previous t expr)]
+    (is (= expected-next
+           (next-instant t expr)))
+    (is (= expected-previous
+           (previous t expr)))))
+
+(deftest test-last-keyword-week-of-month-2
+  (let [expr { :day { :dayOfWeek 3, :weekOfMonth :last } }
+        t (t/date-time 2015 2 14)
+        expected [(t/date-time 2015 3 25)
+                  (t/date-time 2015 4 29)
+                  (t/date-time 2015 5 27)
+                  (t/date-time 2015 6 24)]]
+    (is expected
+        (next-n-times t expr (count expected)))))
+

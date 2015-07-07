@@ -77,9 +77,26 @@
   (let [mil (t/milli dt)]
     (t/minus dt (t/millis mil))))
 
-(defn nth-week [year month n day-of-week]
-  ;; 1 <= n <= 5 or :last
-  ;; may return nil if no such day exists in a month
+(defn last-day-of-week [year month day-of-week]
+  (let [last-day (t/last-day-of-the-month year month)
+        dow-of-last-day (t/day-of-week last-day)
+        diff (if (>= dow-of-last-day day-of-week)
+               (- dow-of-last-day day-of-week)
+               (+ dow-of-last-day (- 7 day-of-week)))
+        last-day-of-week (t/minus last-day (t/days diff))]
+    last-day-of-week))
+
+(defmulti nth-week
+  (fn [year month n day-of-week]
+    ;; 1 <= n <= 5 or :last
+    (cond
+     (= :last n) :last
+     (and (number? n)
+          (< 0 n) (< n 6)) :number
+     :default (throw (IllegalArgumentException.
+                      (str "Invalid n (must be :last or a number [1, 5]): " n))))))
+
+(defmethod nth-week :number [year month n day-of-week]
   (let [first-day (t/first-day-of-the-month year month)
         dow-of-first-day (t/day-of-week first-day)
         diff (if (<= dow-of-first-day day-of-week)
@@ -91,19 +108,10 @@
       nth-day-of-week
       nil)))
 
-(defn last-day-of-week [year month day-of-week]
-  (let [last-day (t/last-day-of-the-month year month)
-        dow-of-last-day (t/day-of-week last-day)
-        diff (if (>= dow-of-last-day day-of-week)
-               (- dow-of-last-day day-of-week)
-               (+ dow-of-last-day (- 7 day-of-week)))
-        last-day-of-week (t/minus last-day (t/days diff))]
-    last-day-of-week))
+(defmethod nth-week :last [year month n day-of-week]
+  (last-day-of-week year month day-of-week))
 
 (defn previous-nth-week [base-time n day-of-week]
-  (if (> n 5)
-    (throw (IllegalArgumentException.
-            (str "Invalid day-of-week: " n))))
   (loop [nth nil
          base-t base-time]
     (if nth
@@ -124,9 +132,6 @@
          (t/minus base-t (t/months 1)))))))
 
 (defn next-nth-week [base-time n day-of-week]
-  (if (> n 5)
-    (throw (IllegalArgumentException.
-            (str "Invalid day-of-week: " n))))
   (loop [nth nil
          base-t base-time]
     (if nth
@@ -191,7 +196,22 @@
       nil
       (t/date-time year month day hour minute second))))
 
-(defn previous-day-of-month [base-time day-of-month]
+(defmulti previous-day-of-month 
+  (fn [base-time day-of-month]
+    (cond
+     (= :last day-of-month) :last
+     (and (number? day-of-month)
+          (< 0 day-of-month)
+          (< day-of-month 32)) :number
+     :default (throw (IllegalArgumentException.
+                      (str "Invalid day-of-month: " day-of-month))))))
+
+(defmethod previous-day-of-month :last [base-time day-of-month]
+  (let [prev-month (t/minus base-time (t/months 1))]
+    (t/last-day-of-the-month (t/year prev-month)
+                             (t/month prev-month))))
+
+(defmethod previous-day-of-month :number [base-time day-of-month]
   (if (> day-of-month 31)
     (throw (IllegalArgumentException.
             (str "Invalid day-of-month: " day-of-month))))
@@ -212,7 +232,21 @@
                                    (t/second month-prior)))
                month-prior)))))
 
-(defn next-day-of-month [base-time day-of-month]
+(defmulti next-day-of-month
+  (fn [base-time day-of-month]
+    (cond
+     (= :last day-of-month) :last
+     (and (number? day-of-month)
+          (< 0 day-of-month)
+          (< day-of-month 32)) :number
+     :default (throw (IllegalArgumentException.
+                      (str "Invalid day-of-month: " day-of-month))))))
+
+(defmethod next-day-of-month :last [base-time day-of-month]
+  (let [next-day (t/plus base-time (t/days 1))]
+    (t/last-day-of-the-month (t/year next-day) (t/month next-day))))
+
+(defmethod next-day-of-month :number [base-time day-of-month]
   (if (> day-of-month 31)
     (throw (IllegalArgumentException.
             (str "Invalid day-of-month: " day-of-month))))
@@ -257,14 +291,16 @@
 ;;  }
 (defn previous-day [base-time day-pattern]
   (cond
-   (number? day-pattern) (previous-day-of-month base-time day-pattern)
+   (or (number? day-pattern)
+       (= :last day-pattern)) (previous-day-of-month base-time day-pattern)
    (map? day-pattern) (previous-x-of-week base-time day-pattern)
    :else (throw (IllegalArgumentException.
                     (str "Invalid day-pattern: " day-pattern)))))
 
 (defn next-day-instant [base-time day-pattern]
   (cond
-   (number? day-pattern) (next-day-of-month base-time day-pattern)
+   (or (number? day-pattern)
+       (= day-pattern :last)) (next-day-of-month base-time day-pattern)
    (map? day-pattern) (next-x-of-week base-time day-pattern)
    :else (throw (IllegalArgumentException.
                  (str "Invalid day-pattern: " day-pattern)))))
@@ -273,6 +309,7 @@
   (fn [base-time day-pattern]
     (cond
      (number? day-pattern) :single
+     (= day-pattern :last) :single
      (map? day-pattern) :single
      (sequential? day-pattern) :multiple
      :else (throw (IllegalArgumentException.
