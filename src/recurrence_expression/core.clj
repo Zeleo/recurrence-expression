@@ -914,7 +914,24 @@
                nil
                (if (included? next-time boundaries)
                  next-time
-                 (recur (next-included-time next-time boundaries))))))))))
+                 (recur (next-included-time next-time boundaries)))))))))
+  
+  ([current-time schedule start-time end-time time-zone]
+     ;; Time-zone must be DateTimeZone.
+     ;; Assuming current-time, start-time, end-time are in UTC, for now.
+     ;; Function will return time in UTC.
+     (let [ctime (.withZone current-time time-zone)
+           stime (.withZone (if (nil? start-time)
+                              min-date-time
+                              start-time) time-zone)
+           etime (.withZone (if (nil? end-time)
+                              max-date-time
+                              end-time) time-zone)
+           next (next-time ctime schedule stime etime)]
+       (if (nil? next)
+         next
+         (let [with-zone (.withZoneRetainFields next time-zone)]
+           (.withZone with-zone DateTimeZone/UTC))))))
 
 (defn next-n-times
   ([current-time schedule num-times]

@@ -21,6 +21,7 @@
             [recurrence-expression.core :refer :all]
             [recurrence-expression.data :refer :all]
             [clj-time.core :as t])
+  (:import (org.joda.time DateTimeZone))
   (:import (clojure.lang ExceptionInfo)))
 
 ;;; Sample time objects
@@ -936,3 +937,10 @@ default values now explicitly stated")
     (is expected
         (next-n-times t expr (count expected)))))
 
+(deftest test-time-zone
+  (let [zone (DateTimeZone/forID "Asia/Tokyo")
+        current-time (t/date-time 2015 7 28)
+        schedule { :at { :month 1 :day 1 } }
+        expected (t/date-time 2015 12 31 15)
+        actual (next-time current-time schedule nil nil zone)]
+    (is (= expected actual))))
