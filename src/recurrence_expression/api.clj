@@ -1,4 +1,4 @@
-;; Copyright (c) 2015 Bjönd, Inc.
+;; Copyright (c) 2015--2016 Bjönd, Inc.
 ;;
 ;; This file is part of Recurrence Expression.
 ;;

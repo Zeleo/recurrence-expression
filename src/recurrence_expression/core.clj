@@ -1,4 +1,4 @@
-;; Copyright (c) 2015 Bjönd, Inc.
+;; Copyright (c) 2015--2016 Bjönd, Inc.
 ;;
 ;; This file is part of Recurrence Expression.
 ;;
@@ -17,40 +17,25 @@
 ;; <http://www.gnu.org/licenses/>.
 
 (ns recurrence-expression.core
-  (:require clojure.core)
-  (:require [clojure.pprint :as pp])
-  (:require [clojure.math.numeric-tower :as nt])
-  (:require [clj-time.core :as t])
-  (:require [clj-time.format :as tf])
-  (:require [clj-time.coerce :as tc])
-  (:require [clj-time.periodic :as tp])
-  (:require [schema.core :as s])
-  (:require [recurrence-expression.data :refer :all])
-  (:import (org.joda.time DateTime DateTimeZone))
-  (:import (java.util Calendar)))
-
-;; {
-;;  :every { :week 13 } 
-;;  }
-
-;; 3rd Monday of the month.
-;; {
-;;  :day { :dayOfWeek 1 :weekOfMonth 3 }
-;;  }
-;; Wendesday and Friday of 2nd week
-;;  { :dayOfWeek [ 3, 5 ] :weekOfMonth 2 }
-;;
+  (:require [clojure.pprint :as pp]
+            [clojure.math.numeric-tower :as nt]
+            [clj-time.core :as t]
+            [clj-time.format :as tf]
+            [clj-time.coerce :as tc]
+            [clj-time.periodic :as tp]
+            [schema.core :as s]
+            [recurrence-expression.data :refer :all])
+  (:import (org.joda.time DateTime DateTimeZone)
+           (java.util Calendar)))
 
 ;; order matters in this list.
 (def instant-property-list
-  [
-   :second
+  [:second
    :minute
    :hour
    :day
    :month
-   :year
-   ])
+   :year])
 
 (def instant-property-index-map
   (reduce
@@ -59,14 +44,12 @@
    instant-property-list))
 
 (def instant-property-ranges
-  {
-   :second { :min 0 :max 59 }
-   :minute { :min 0 :max 59 }
-   :hour { :min 0 :max 23 }
-   :day { :min 1 :max 31 }
-   :month { :min 1 :max 12 }
-   :year { :min 2015 :max (+ 100 (t/year (t/now))) }
-   })
+  {:second {:min 0 :max 59}
+   :minute {:min 0 :max 59}
+   :hour {:min 0 :max 23}
+   :day {:min 1 :max 31}
+   :month {:min 1 :max 12}
+   :year {:min 2015 :max (+ 100 (t/year (t/now)))}})
 
 (def max-date-time (t/minus
                     (t/date-time (+ 1 (:max (:year instant-property-ranges))))
