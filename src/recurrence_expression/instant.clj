@@ -17,7 +17,8 @@
 ;; <http://www.gnu.org/licenses/>.
 
 (ns recurrence-expression.instant
-  (:require [clj-time.core :as t]))
+  (:require [clj-time.core :as t])
+  (:import (org.joda.time DateTime)))
 
 ;; Order matters: from small to big
 (def instant-property-list
@@ -65,11 +66,11 @@
     value
     default))
 
-(defn safe-create-date [year month day hour minute second]
+(defn safe-create-date [year month day hour minute second zone]
   (let [num-days (t/number-of-days-in-the-month year month)]
     (if (> day num-days)
       nil
-      (t/date-time year month day hour minute second))))
+      (DateTime. year month day hour minute second zone))))
 
 (defn compare-days [date-time instant-pattern]
   (let [dt-day (t/day date-time)

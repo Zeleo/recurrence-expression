@@ -19,27 +19,30 @@
 (ns recurrence-expression.previous
   (:require [clojure.pprint :as pp]
             [clj-time.core :as t]
-            [recurrence-expression.instant :refer :all]))
+            [recurrence-expression.instant :refer :all])
+  (:import (org.joda.time DateTime)))
 
 (defn previous-nth-week [base-time n day-of-week]
-  (loop [nth nil
-         base-t base-time]
-    (if nth
-      nth
-      (let [year (t/year base-t)
-            month (t/month base-t)
-            d (nth-week year month n day-of-week)
-            day (t/date-time (t/year d)
-                        (t/month d)
-                        (t/day d)
-                        (t/hour base-t)
-                        (t/minute base-t)
-                        (t/second base-t))]
-        (recur
-         (if (and day (or (= day base-time) (t/before? day base-time)))
-           day
-           nil)
-         (t/minus base-t (t/months 1)))))))
+  (let [zone (.getZone base-time)]
+    (loop [nth nil
+           base-t base-time]
+      (if nth
+        nth
+        (let [year (t/year base-t)
+              month (t/month base-t)
+              d (nth-week year month n day-of-week)
+              day (DateTime. (t/year d)
+                             (t/month d)
+                             (t/day d)
+                             (t/hour base-t)
+                             (t/minute base-t)
+                             (t/second base-t)
+                             zone)]
+          (recur
+           (if (and day (or (= day base-time) (t/before? day base-time)))
+             day
+             nil)
+           (t/minus base-t (t/months 1))))))))
 
 (defn previous-day-of-week [base-time day-of-week]
   (let [base-day-of-week (t/day-of-week base-time)
@@ -75,9 +78,11 @@
                       (str "Invalid day-of-month: " day-of-month))))))
 
 (defmethod previous-day-of-month :last [base-time day-of-month]
-  (let [prev-month (t/minus base-time (t/months 1))]
-    (t/last-day-of-the-month (t/year prev-month)
-                             (t/month prev-month))))
+  (let [prev-month (t/minus base-time (t/months 1))
+        zone (.getZone base-time)]
+    (t/from-time-zone (t/last-day-of-the-month (t/year prev-month)
+                                               (t/month prev-month))
+                      zone)))
 
 (defmethod previous-day-of-month :number [base-time day-of-month]
   (if (> day-of-month 31)
@@ -88,7 +93,8 @@
     (if the-day
       the-day
       (let [base-day (t/day base-t)
-            month-prior (t/minus base-t (t/months 1))]
+            month-prior (t/minus base-t (t/months 1))
+            zone (.getZone base-time)]
         (recur (if (>= base-day day-of-month)
                  (let [diff (- base-day day-of-month)]
                    (t/minus base-t (t/days diff)))
@@ -97,7 +103,8 @@
                                    day-of-month
                                    (t/hour month-prior)
                                    (t/minute month-prior)
-                                   (t/second month-prior)))
+                                   (t/second month-prior)
+                                   zone))
                month-prior)))))
 
 ;; Tuesdays
@@ -129,42 +136,46 @@
                                 time-unit-key))
 
 (defmethod previous-unit-value :year [time-unit-key base-time instant-pattern]
-  (t/date-time (if (contains? instant-pattern time-unit-key)
-                 (get instant-pattern :year)
-                 (t/year base-time))
-               (t/month base-time)
-               (t/day base-time)
-               (t/hour base-time)
-               (t/minute base-time)
-               (t/second base-time)))
+  (DateTime. (if (contains? instant-pattern time-unit-key)
+               (get instant-pattern :year)
+               (t/year base-time))
+             (t/month base-time)
+             (t/day base-time)
+             (t/hour base-time)
+             (t/minute base-time)
+             (t/second base-time)
+             (.getZone base-time)))
 
 (defmethod previous-unit-value :month [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (let [rollback (< (t/month base-time) (get instant-pattern :month))]
-      (t/date-time (if rollback
-                     (t/year (t/minus base-time (t/years 1)))
-                     (t/year base-time))
-                   (get instant-pattern :month)
-                   (t/day base-time)
-                   (t/hour base-time)
-                   (t/minute base-time)
-                   (t/second base-time)))
-    (t/date-time (t/year base-time)
-                 1
+      (DateTime. (if rollback
+                   (t/year (t/minus base-time (t/years 1)))
+                   (t/year base-time))
+                 (get instant-pattern :month)
                  (t/day base-time)
                  (t/hour base-time)
                  (t/minute base-time)
-                 (t/second base-time))))
+                 (t/second base-time)
+                 (.getZone base-time)))
+    (DateTime. (t/year base-time)
+               1
+               (t/day base-time)
+               (t/hour base-time)
+               (t/minute base-time)
+               (t/second base-time)
+               (.getZone base-time))))
 
 (defmethod previous-unit-value :day [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (previous-day base-time (get instant-pattern time-unit-key))
-    (t/date-time (t/year base-time)
-                 (t/month base-time)
-                 1
-                 (t/hour base-time)
-                 (t/minute base-time)
-                 (t/second base-time))))
+    (DateTime. (t/year base-time)
+               (t/month base-time)
+               1
+               (t/hour base-time)
+               (t/minute base-time)
+               (t/second base-time)
+               (.getZone base-time))))
 
 (defmethod previous-unit-value :hour [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
@@ -172,18 +183,20 @@
           t (if rollback
               (t/minus base-time (t/days 1))
               base-time)]
-      (t/date-time (t/year t)
-                   (t/month t)
-                   (t/day t)
-                   (get instant-pattern :hour)
-                   (t/minute t)
-                   (t/second t)))
-    (t/date-time (t/year base-time)
-                 (t/month base-time)
-                 (t/day base-time)
-                 0
-                 (t/minute base-time)
-                 (t/second base-time))))
+      (DateTime. (t/year t)
+                 (t/month t)
+                 (t/day t)
+                 (get instant-pattern :hour)
+                 (t/minute t)
+                 (t/second t)
+                 (.getZone base-time)))
+    (DateTime. (t/year base-time)
+               (t/month base-time)
+               (t/day base-time)
+               0
+               (t/minute base-time)
+               (t/second base-time)
+               (.getZone base-time))))
 
 (defmethod previous-unit-value :minute [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
@@ -191,18 +204,20 @@
           t (if rollback
               (t/minus base-time (t/hours 1))
               base-time)]
-      (t/date-time (t/year t)
-                   (t/month t)
-                   (t/day t)
-                   (t/hour t)
-                   (get instant-pattern :minute)
-                   (t/second t)))
-    (t/date-time (t/year base-time)
-                 (t/month base-time)
-                 (t/day base-time)
-                 (t/hour base-time)
-                 0
-                 (t/second base-time))))
+      (DateTime. (t/year t)
+                 (t/month t)
+                 (t/day t)
+                 (t/hour t)
+                 (get instant-pattern :minute)
+                 (t/second t)
+                 (.getZone base-time)))
+    (DateTime. (t/year base-time)
+               (t/month base-time)
+               (t/day base-time)
+               (t/hour base-time)
+               0
+               (t/second base-time)
+               (.getZone base-time))))
 
 (defmethod previous-unit-value :second [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
@@ -210,18 +225,20 @@
           t (if rollback
               (t/minus base-time (t/minutes 1))
               base-time)]
-      (t/date-time (t/year t)
-                   (t/month t)
-                   (t/day t)
-                   (t/hour t)
-                   (t/minute t)
-                   (get instant-pattern :second)))
-    (t/date-time (t/year base-time)
-                 (t/month base-time)
-                 (t/day base-time)
-                 (t/hour base-time)
-                 (t/minute base-time)
-                 0)))
+      (DateTime. (t/year t)
+                 (t/month t)
+                 (t/day t)
+                 (t/hour t)
+                 (t/minute t)
+                 (get instant-pattern :second)
+                 (.getZone base-time)))
+    (DateTime. (t/year base-time)
+               (t/month base-time)
+               (t/day base-time)
+               (t/hour base-time)
+               (t/minute base-time)
+               0
+               (.getZone base-time))))
 
 (defmethod previous-unit-value :default [time-unit-key base-time instant-pattern]
   (throw (IllegalArgumentException. (str "Invalid time unit: " time-unit-key))))

@@ -256,11 +256,12 @@
            time))))))
 
 (defmethod next-occurrence :single [current-time recurrence-pattern]
-  (let [compiled (compile-recurrence-pattern recurrence-pattern)]
-    (loop [time current-time
+  (let [compiled (compile-recurrence-pattern recurrence-pattern)
+        zone (.getZone current-time)]
+    (loop [time (t/from-time-zone current-time t/utc)
            keep-going true]
       (if (not keep-going)
-        time
+        (t/from-time-zone time zone)
         (let [[t roll-over] (roll-forward time compiled recurrence-pattern)]
           (recur t
                  roll-over))))))

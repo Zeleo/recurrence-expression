@@ -22,52 +22,52 @@
             [recurrence-expression.next :as n]
             [recurrence-expression.previous :as p]))
 
-(defmulti included? (fn [time interval-pattern]
-                      (cond (sequential? interval-pattern) :multiple
-                            (map? interval-pattern) :single
-                            (or (nil? interval-pattern) (empty? interval-pattern)) :empty
+(defmulti included? (fn [time boundary-pattern]
+                      (cond (sequential? boundary-pattern) :multiple
+                            (map? boundary-pattern) :single
+                            (or (nil? boundary-pattern) (empty? boundary-pattern)) :empty
                             :else (throw (IllegalArgumentException.
-                                             (str "Invalid argument: " interval-pattern))))))
+                                             (str "Invalid argument: " boundary-pattern))))))
 
-(defmethod included? :multiple [time interval-pattern]
-  (some #(included? time %) interval-pattern))
+(defmethod included? :multiple [time boundary-pattern]
+  (some #(included? time %) boundary-pattern))
                       
-(defmethod included? :single [time interval-pattern]
+(defmethod included? :single [time boundary-pattern]
   "True if time sits inside interval described by interval pattern"
-  (let [lower (p/previous time (get interval-pattern :from))
-        upper (n/next-instant lower (get interval-pattern :to))
+  (let [lower (p/previous time (get boundary-pattern :from))
+        upper (n/next-instant lower (get boundary-pattern :to))
         included (or
                   (and (t/before? lower time)
                        (t/before? time upper))
                   (= lower time)
                   (= upper time))
-        nested-interval (get interval-pattern :between)]
+        nested-interval (get boundary-pattern :between)]
     (if included
       (if (nil? nested-interval)
         true
         (included? time nested-interval))
       false)))
 
-(defmethod included? :empty [time interval-pattern]
+(defmethod included? :empty [time boundary-pattern]
   true)
 
-(defmulti next-included-time (fn [time interval-pattern]
-                      (cond (sequential? interval-pattern) :multiple
-                            (map? interval-pattern) :single
-                            (or (nil? interval-pattern) (empty? interval-pattern)) :empty
+(defmulti next-included-time (fn [time boundary-pattern]
+                      (cond (sequential? boundary-pattern) :multiple
+                            (map? boundary-pattern) :single
+                            (or (nil? boundary-pattern) (empty? boundary-pattern)) :empty
                             :else (throw (IllegalArgumentException.
-                                             (str "Invalid argument: " interval-pattern))))))
+                                             (str "Invalid argument: " boundary-pattern))))))
 
-(defmethod next-included-time :multiple [time interval-pattern]
-  (let [times (map #(next-included-time time %) interval-pattern)
+(defmethod next-included-time :multiple [time boundary-pattern]
+  (let [times (map #(next-included-time time %) boundary-pattern)
         sorted (sort times)]
     (if (empty? sorted)
       (throw (Exception. "Maximum time exceeded while computing next-included-time")))
     (first sorted)))
 
-(defmethod next-included-time :single [time interval-pattern]
-  "It's assumed here that time is outside interval-pattern"
-  (n/next-instant time (get interval-pattern :from)))
+(defmethod next-included-time :single [time boundary-pattern]
+  "It's assumed here that time is outside boundary-pattern"
+  (n/next-instant time (get boundary-pattern :from)))
 
-(defmethod next-included-time :empty [time interval-pattern]
+(defmethod next-included-time :empty [time boundary-pattern]
   time)

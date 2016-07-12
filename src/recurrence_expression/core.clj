@@ -19,13 +19,12 @@
 (ns recurrence-expression.core
   (:require [clojure.pprint :as pp]
             [clj-time.core :as t]
+            #_[clj-time.coerce :as tc]
             [recurrence-expression.boundary :as b]
             [recurrence-expression.instant :as i]
             [recurrence-expression.interval :as v]
-;;            [recurrence-expression.next :as n]
-;;            [recurrence-expression.previous :as p]
             [recurrence-expression.recurrence :as r])
-  (:import (org.joda.time DateTimeZone)))
+  (:import (org.joda.time DateTime DateTimeZone)))
 
 (defn next-time
   ([current-time schedule]
@@ -60,24 +59,7 @@
                nil
                (if (b/included? next-time boundaries)
                  next-time
-                 (recur (b/next-included-time next-time boundaries)))))))))
-  
-  ([current-time schedule start-time end-time time-zone]
-     ;; Time-zone must be DateTimeZone.
-     ;; Assuming current-time, start-time, end-time are in UTC, for now.
-     ;; Function will return time in UTC.
-     (let [ctime (.withZone current-time time-zone)
-           stime (.withZone (if (nil? start-time)
-                              i/min-date-time
-                              start-time) time-zone)
-           etime (.withZone (if (nil? end-time)
-                              i/max-date-time
-                              end-time) time-zone)
-           next (next-time ctime schedule stime etime)]
-       (if (nil? next)
-         next
-         (let [with-zone (.withZoneRetainFields next time-zone)]
-           (.withZone with-zone DateTimeZone/UTC))))))
+                 (recur (b/next-included-time next-time boundaries))))))))))
 
 (defn next-n-times
   ([current-time schedule num-times]

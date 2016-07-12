@@ -23,7 +23,7 @@
             [recurrence-expression.next :as n]
             [recurrence-expression.previous :as p]
             [clj-time.core :as t])
-  (:import (org.joda.time DateTimeZone))
+  (:import (org.joda.time DateTime DateTimeZone))
   (:import (clojure.lang ExceptionInfo)))
 
 ;;; Sample time objects
@@ -350,8 +350,8 @@
 
 (deftest test-time-zone
   (let [zone (DateTimeZone/forID "Asia/Tokyo")
-        current-time (t/date-time 2015 7 28)
+        current-time (DateTime. 2015 7 28 0 0 0 zone)
         schedule { :at { :month 1 :day 1 } }
-        expected (t/date-time 2015 12 31 15)
-        actual (next-time current-time schedule nil nil zone)]
+        expected (DateTime. 2016 1 1 0 0 0 zone)
+        actual (next-time current-time schedule nil nil)]
     (is (= expected actual))))

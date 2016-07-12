@@ -22,8 +22,8 @@
             [clj-time.periodic :as tp]
             [recurrence-expression.instant :as i]
             [recurrence-expression.recurrence :as r])
-  (:import (org.joda.time DateTime DateTimeZone)
-           (java.util Calendar)))
+  (:import (org.joda.time DateTime DateTimeZone)))
+;;           (java.util Calendar)))
 
 (defn zero-out-millis [dt]
   (let [mil (t/milli dt)]
@@ -59,15 +59,17 @@
     (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword)))))
 
 (defn zero-out-lower [time unit-keyword]
-  (case unit-keyword
-    :year (t/date-time (t/year time) 1 1 0 0 0)
-    :month (t/date-time (t/year time) (t/month time) 1 0 0 0)
-    :week (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
-    :day (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
-    :hour (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) 0 0)
-    :minute (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) (t/minute time) 0)
-    :second (zero-out-millis time)
-    (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword)))))
+  (let [zone (.getZone time)
+        utc-t (case unit-keyword
+                :year (t/date-time (t/year time) 1 1 0 0 0)
+                :month (t/date-time (t/year time) (t/month time) 1 0 0 0)
+                :week (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
+                :day (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
+                :hour (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) 0 0)
+                :minute (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) (t/minute time) 0)
+                :second (zero-out-millis time)
+                (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword))))]
+    (t/from-time-zone utc-t zone)))
 
 (defn next-interval
   ([current-time schedule start-time]
