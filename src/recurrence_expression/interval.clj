@@ -23,7 +23,6 @@
             [recurrence-expression.instant :as i]
             [recurrence-expression.recurrence :as r])
   (:import (org.joda.time DateTime DateTimeZone)))
-;;           (java.util Calendar)))
 
 (defn zero-out-millis [dt]
   (let [mil (t/milli dt)]
@@ -72,17 +71,18 @@
     (t/from-time-zone utc-t zone)))
 
 (defn next-interval
-  ([current-time schedule start-time]
-     (next-interval current-time schedule start-time i/max-date-time))
-  ([current-time schedule start-time end-time]
+  [current-time schedule start-time]
      (let [interval-pattern (get schedule :every)
            recurrence-pattern (get schedule :at)
-           first-hit (r/next-occurrence start-time recurrence-pattern)]
-       (if (t/after? first-hit current-time)
-         first-hit
-         (let [unit-keyword (first (keys interval-pattern)) ;; works only when (= 1 (count interval-pattern))
-               adjusted-start-time (zero-out-lower start-time unit-keyword)
-               next-one (first (filter #(t/after? % current-time)
-                                       (tp/periodic-seq adjusted-start-time
-                                                        (to-period interval-pattern))))]
-           next-one)))))
+           unit-keyword (first (keys interval-pattern))] ;; works only when (= 1 (count interval-pattern))]
+       (if (nil? recurrence-pattern)
+         (first (filter #(t/after? % current-time)
+                        (tp/periodic-seq start-time
+                                         (to-period interval-pattern))))
+         (let [first-hit (r/next-occurrence start-time recurrence-pattern)]
+           (if (t/after? first-hit current-time)
+             first-hit
+             (let [adjusted-start-time (zero-out-lower first-hit unit-keyword)]
+               (first (filter #(t/after? % current-time)
+                              (tp/periodic-seq adjusted-start-time
+                                               (to-period interval-pattern))))))))))

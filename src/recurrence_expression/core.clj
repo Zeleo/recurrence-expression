@@ -47,14 +47,16 @@
            boundaries (get schedule :between)
            interval (get schedule :every)]
        (loop [time (t/plus current-time (t/seconds 1))]
-         (if (or (t/after? time end-time)
+         (if (or (= time end-time)
+                 (t/after? time end-time)
                  (t/after? time i/max-date-time))
            nil
            (let [t1 (if (nil? interval)
                       time
-                      (v/next-interval time schedule start-time end-time))
+                      (v/next-interval time schedule start-time))
                  next-time (r/next-occurrence t1 recurrence)]
-             (if (or (t/after? next-time end-time)
+             (if (or (= next-time end-time)
+                     (t/after? next-time end-time)
                      (t/after? next-time i/max-date-time))
                nil
                (if (b/included? next-time boundaries)
