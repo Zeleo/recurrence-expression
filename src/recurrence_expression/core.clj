@@ -26,6 +26,21 @@
             [recurrence-expression.recurrence :as r])
   (:import (org.joda.time DateTime DateTimeZone)))
 
+(declare next-time)
+
+(defn- next-time-recurrence-interval
+  [current-time interval-pattern recurrence-pattern start-time end-time]
+  (let [adjusted (v/adjust-start-time interval-pattern start-time)]
+    (loop [time current-time]
+      (if (nil? time)
+        nil
+        (let [end-prime (v/end-prime time interval-pattern)
+              next (next-time time {:at recurrence-pattern} time end-prime)]
+          (if next
+            next
+            (recur
+             (next-time time {:every interval-pattern} adjusted end-time))))))))
+
 (defn next-time
   ([current-time schedule]
      (let [start-time i/min-date-time
@@ -46,18 +61,28 @@
            recurrence (get schedule :at)
            boundaries (get schedule :between)
            interval (get schedule :every)]
-       (loop [time (t/plus current-time (t/seconds 1))]
+       (loop [time (let [current-time-prime (t/plus current-time (t/seconds 1))]
+                     (if (t/after? current-time-prime start-time)
+                       current-time-prime start-time))]
          (if (or (= time end-time)
                  (t/after? time end-time)
                  (t/after? time i/max-date-time))
            nil
-           (let [t1 (if (nil? interval)
-                      time
-                      (v/next-interval time schedule start-time))
-                 next-time (r/next-occurrence t1 recurrence)]
-             (if (or (= next-time end-time)
+           (let [next-time
+                 (cond
+                  (and recurrence interval) (next-time-recurrence-interval time
+                                                                           interval
+                                                                           recurrence
+                                                                           start-time
+                                                                           end-time)
+                  recurrence (r/next-occurrence time recurrence)
+                  interval (v/next-interval time interval start-time)
+                  :else (throw (Exception.
+                                (str "Invalid expression :at or :every must be defined: " schedule))))]
+             (if (or (nil? next-time)
                      (t/after? next-time end-time)
-                     (t/after? next-time i/max-date-time))
+                     (t/after? next-time i/max-date-time)
+                     (= next-time end-time))
                nil
                (if (b/included? next-time boundaries)
                  next-time
@@ -73,7 +98,6 @@
      (loop [n num-times
             fire-times []
             current current-time]
-       #_(println :n n :fire-times fire-times :current current)
        (if (= 0 n)
          fire-times
          (let [next-time (next-time current schedule start-time end-time)]

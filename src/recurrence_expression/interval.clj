@@ -24,6 +24,22 @@
             [recurrence-expression.recurrence :as r])
   (:import (org.joda.time DateTime DateTimeZone)))
 
+;; Order matters: from small to big
+(def interval-property-list
+  [:second
+   :minute
+   :hour
+   :day
+   :week
+   :month
+   :year])
+
+(def interval-property-index-map
+  (reduce
+   #(assoc %1 %2 (.indexOf interval-property-list %2))
+   {}
+   interval-property-list))
+
 (defn zero-out-millis [dt]
   (let [mil (t/milli dt)]
     (t/minus dt (t/millis mil))))
@@ -40,29 +56,38 @@
    :second (t/seconds (get interval-pattern :second))
    (throw (IllegalArgumentException. (str "Invalid interval-pattern: " interval-pattern)))))
 
+(defn to-sunday [time]
+  ;; somehow clj-time (joda time) has Monday as the beginning of week
+  (let [diff (- 7 (t/day-of-week time))]
+    (t/plus time (t/days diff))))
+
 (defn to-monday [time]
   ;; somehow clj-time (joda time) has Monday as the beginning of week
   (let [diff (- (t/day-of-week time) 1)]
     (t/minus time (t/days diff))))
 
 (defn max-out-lower [time unit-keyword]
-  (case unit-keyword
-    :year (t/date-time (t/year time) 12 31 23 59 59)
-    :month (let [last-day (t/last-day-of-the-month time)]
-                 (t/date-time (t/year last-day) (t/month last-day) (t/day last-day) 23 59 59))
-    :week (t/date-time (t/year time) (t/month time) (t/day time) 23 59 59)
-    :day (t/date-time (t/year time) (t/month time) (t/day time) 23 59 59)
-    :hour (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) 59 59)
-    :minute (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) (t/minute time) 59)
-    :second (t/plus (zero-out-millis time) (t/seconds 1))
-    (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword)))))
+  (let [zone (.getZone time)
+        utc-t (case unit-keyword
+                :year (t/date-time (t/year time) 12 31 23 59 59)
+                :month (let [last-day (t/last-day-of-the-month time)]
+                         (t/date-time (t/year last-day) (t/month last-day) (t/day last-day) 23 59 59))
+                :week (to-sunday
+                       (t/date-time (t/year time) (t/month time) (t/day time) 23 59 59))
+                :day (t/date-time (t/year time) (t/month time) (t/day time) 23 59 59)
+                :hour (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) 59 59)
+                :minute (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) (t/minute time) 59)
+                :second (t/plus (zero-out-millis time) (t/seconds 1))
+                (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword))))]
+    (t/from-time-zone utc-t zone)))
 
 (defn zero-out-lower [time unit-keyword]
   (let [zone (.getZone time)
         utc-t (case unit-keyword
                 :year (t/date-time (t/year time) 1 1 0 0 0)
                 :month (t/date-time (t/year time) (t/month time) 1 0 0 0)
-                :week (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
+                :week (to-monday
+                       (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0))
                 :day (t/date-time (t/year time) (t/month time) (t/day time) 0 0 0)
                 :hour (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) 0 0)
                 :minute (t/date-time (t/year time) (t/month time) (t/day time) (t/hour time) (t/minute time) 0)
@@ -70,19 +95,30 @@
                 (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword))))]
     (t/from-time-zone utc-t zone)))
 
+(defn- lowest-property [interval-pattern]
+  (reduce #(let [index1 (get interval-property-index-map %1)
+                 index2 (get interval-property-index-map %2)]
+             (if (< index1 index2) %1 %2))
+          (last interval-property-list) (keys interval-pattern)))
+
+(defn adjust-start-time
+  [interval-pattern start-time]
+  (let [period (to-period interval-pattern)
+        unit-keyword (lowest-property interval-pattern)]
+    (-> start-time
+        (t/minus period)
+        (zero-out-lower unit-keyword))))
+
+(defn end-prime
+  [current-time interval-pattern]
+  (let [unit-keyword (lowest-property interval-pattern)]
+    (max-out-lower current-time unit-keyword)))
+
 (defn next-interval
-  [current-time schedule start-time]
-     (let [interval-pattern (get schedule :every)
-           recurrence-pattern (get schedule :at)
-           unit-keyword (first (keys interval-pattern))] ;; works only when (= 1 (count interval-pattern))]
-       (if (nil? recurrence-pattern)
-         (first (filter #(t/after? % current-time)
-                        (tp/periodic-seq start-time
-                                         (to-period interval-pattern))))
-         (let [first-hit (r/next-occurrence start-time recurrence-pattern)]
-           (if (t/after? first-hit current-time)
-             first-hit
-             (let [adjusted-start-time (zero-out-lower first-hit unit-keyword)]
-               (first (filter #(t/after? % current-time)
-                              (tp/periodic-seq adjusted-start-time
-                                               (to-period interval-pattern))))))))))
+  [current-time interval-pattern start-time]
+  (let [adjusted (adjust-start-time interval-pattern start-time)]
+    (first (filter #(or
+                     (t/after? % current-time)
+                     (= % current-time))
+                   (tp/periodic-seq adjusted
+                                    (to-period interval-pattern))))))

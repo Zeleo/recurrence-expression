@@ -169,6 +169,33 @@
           "highest doesn't change but lower change"))
     ))
 
+(deftest test-next-day-of-week
+  (let [sun (t/date-time 2016 07 10)
+        mon (t/date-time 2016 07 11)
+        tue (t/date-time 2016 07 12)
+        wed (t/date-time 2016 07 13)
+        thu (t/date-time 2016 07 14)
+        fri (t/date-time 2016 07 15)
+        sat (t/date-time 2016 07 16)]
+    (loop [day 0
+           expected-1 (t/date-time 2016 07 10)
+           expected-2 (t/date-time 2016 07 17)
+           group-1 [sun]
+           group-2 [mon tue wed thu fri sat]]
+      (doseq [b group-1]
+        (is (= expected-1 (next-day-of-week b day))
+            (str "base: " b ", day: " day)))
+      (doseq [b group-2]
+        (is (= expected-2 (next-day-of-week b day))
+            (str "base: " b ", day: " day)))
+      (if (<= 6 day)
+        nil
+        (recur (inc day)
+               (t/plus expected-1 (t/days 1))
+               (t/plus expected-2 (t/days 1))
+               (conj group-1 (first group-2))
+               (rest group-2))))))
+
 (deftest test-next-week
   (let [base-time (t/date-time 2015 3 18 13 27 45)]
     (is (= (t/date-time 2015 3 18 13 27 45)

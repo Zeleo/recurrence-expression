@@ -48,7 +48,7 @@
            (zero-out-lower time :month)))
     (is (= (t/date-time 2015 10 14 0 0 0)
            (zero-out-lower time :day)))
-    (is (= (t/date-time 2015 10 14 0 0 0) 
+    (is (= (t/date-time 2015 10 12 0 0 0) 
            (zero-out-lower time :week)))
     (is (= (t/date-time 2015 10 14 14 0 0)
            (zero-out-lower time :hour)))

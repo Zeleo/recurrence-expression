@@ -49,7 +49,7 @@
     (if (= base-day-of-week day-of-week)
       base-time
       (let [this-many (if (< base-day-of-week day-of-week)
-                        (- base-day-of-week day-of-week)
+                        (- day-of-week base-day-of-week)
                         (+ (- 7 base-day-of-week) day-of-week))]
         (t/plus base-time (t/days this-many))))))
 
@@ -72,9 +72,10 @@
 
 (defmethod next-day-of-month :last [base-time day-of-month]
   (let [next-day (t/plus base-time (t/days 1))
+        last-day (t/last-day-of-the-month (t/year next-day) (t/month next-day))
         zone (.getZone base-time)]
-    (t/from-time-zone (t/last-day-of-the-month (t/year next-day) (t/month next-day))
-                      zone)))
+    (DateTime. (t/year last-day) (t/month last-day) (t/day last-day)
+               (t/hour base-time) (t/minute base-time) (t/second base-time) zone)))
 
 (defmethod next-day-of-month :number [base-time day-of-month]
   (when (> day-of-month 31)

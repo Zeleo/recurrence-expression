@@ -339,7 +339,7 @@
            (p/previous t expr)))))
 
 (deftest test-last-keyword-week-of-month-2
-  (let [expr { :day { :dayOfWeek 3, :weekOfMonth :last } }
+  (let [expr {:at { :day { :dayOfWeek 3, :weekOfMonth :last }}}
         t (t/date-time 2015 2 14)
         expected [(t/date-time 2015 3 25)
                   (t/date-time 2015 4 29)

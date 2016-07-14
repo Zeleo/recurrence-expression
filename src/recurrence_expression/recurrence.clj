@@ -170,6 +170,20 @@
                  true])
               [current-time false])))))))
 
+(defn contains-week? [recurrence-pattern]
+  (let [day-pattern (get recurrence-pattern :day)]
+    (cond
+     (not day-pattern) false
+     (sequential? day-pattern) (let [maps (filter map? day-pattern)]
+                                 (if (empty? maps)
+                                   false
+                                   (some #(or
+                                           (contains? % :weekOfMonth)
+                                           (contains? % :dayOfWeek)) maps)))
+     (map? day-pattern) (or (contains? day-pattern :weekOfMonth)
+                            (contains? day-pattern :dayOfWeek))
+     :else false)))
+
 (defn- next-month [current-time compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :month)
         current (t/month current-time)
@@ -194,13 +208,24 @@
                                                                                 0)
                                                                    (t/months 1))
                                                            true]
-     :default [(t/date-time year
-                            next-value
-                            day
-                            (t/hour current-time)
-                            (t/minute current-time)
-                            (t/second current-time))
-               false])))
+     :else (if (and (contains-week? compiled-recurrence-pattern)
+                    (not= current next-value))
+             (next-day
+              (t/date-time year
+                           next-value
+                           1
+                           (t/hour current-time)
+                           (t/minute current-time)
+                           (t/second current-time))
+              compiled-recurrence-pattern
+              recurrence-pattern)
+             [(t/date-time year
+                           next-value
+                           day
+                           (t/hour current-time)
+                           (t/minute current-time)
+                           (t/second current-time))
+              false]))))
 
 (defn- next-year [current-time compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :year)
