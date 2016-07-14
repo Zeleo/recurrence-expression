@@ -267,6 +267,20 @@
     (is (= expected-times actual-times)))
   )
 
+(deftest test-every-13-months-3
+  (let [schedule { :every { :month 13 } :at { :day { :weekOfMonth 3 :dayOfWeek 5 } :hour 9 } }
+        zone (t/time-zone-for-id "US/Eastern")
+        start-time (t/from-time-zone (t/date-time 2015 4 10 20 57 16) zone)
+        current-time (t/from-time-zone (t/date-time 2015 4 10 20 57 20) zone)
+        expected-times [(t/from-time-zone (t/date-time 2015 4 17 9) zone)
+                        (t/from-time-zone (t/date-time 2016 5 20 9) zone)
+                        (t/from-time-zone (t/date-time 2017 6 16 9) zone)
+                        (t/from-time-zone (t/date-time 2018 7 20 9) zone)
+                        (t/from-time-zone (t/date-time 2019 8 16 9) zone)]
+        actual-times (next-n-times current-time schedule (count expected-times) start-time)]
+    (is (= expected-times actual-times)))
+  )
+
 (deftest test-leap-years
   (let [exp { :at { :month 2 :day 29 } }
         start-time (t/date-time 2015)
