@@ -205,6 +205,23 @@
              (next-n-times current exp num start end))))
     ))
 
+(deftest sample-monthly-last-week-day
+  (let [exp {:every {:month 3},
+             :at {:hour 9,
+                  :minute 30,
+                  :day {:dayOfWeek 4,
+                        :weekOfMonth :last}}} ;; last Thursdays
+        num 4]
+    (let [current (t/date-time 2016 7 13)
+          start (t/date-time 2016 7 1)
+          end (t/date-time 2017 3 1)
+          expected [(t/date-time 2016 7 28 9 30)
+                    (t/date-time 2016 10 27 9 30)
+                    (t/date-time 2017 1 26 9 30)]]
+      (is (= expected
+             (next-n-times current exp num start end))))
+    ))
+
 (deftest sample-yearly
   (let [exp {:every {:year 4},
              :at {:hour 15,
