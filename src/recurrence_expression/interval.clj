@@ -44,6 +44,7 @@
   (let [mil (t/milli dt)]
     (t/minus dt (t/millis mil))))
 
+;; public for unit testing
 (defn to-period [interval-pattern]
   ;; this only works if interval-pattern only has one key-value pair (which should be the case)
   (case (first (keys interval-pattern))
@@ -56,16 +57,18 @@
    :second (t/seconds (get interval-pattern :second))
    (throw (IllegalArgumentException. (str "Invalid interval-pattern: " interval-pattern)))))
 
-(defn to-sunday [time]
+(defn- to-sunday [time]
   ;; somehow clj-time (joda time) has Monday as the beginning of week
   (let [diff (- 7 (t/day-of-week time))]
     (t/plus time (t/days diff))))
 
+;; public for unit testing
 (defn to-monday [time]
   ;; somehow clj-time (joda time) has Monday as the beginning of week
   (let [diff (- (t/day-of-week time) 1)]
     (t/minus time (t/days diff))))
 
+;; public for unit testing
 (defn max-out-lower [time unit-keyword]
   (let [zone (.getZone time)
         utc-t (case unit-keyword
@@ -81,6 +84,7 @@
                 (throw (IllegalArgumentException. (str "Invalid unit-keyword: " unit-keyword))))]
     (t/from-time-zone utc-t zone)))
 
+;; public for unit testing
 (defn zero-out-lower [time unit-keyword]
   (let [zone (.getZone time)
         utc-t (case unit-keyword

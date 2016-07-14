@@ -22,7 +22,7 @@
             [recurrence-expression.instant :refer :all])
   (:import (org.joda.time DateTime)))
 
-(defn next-nth-week [base-time n day-of-week]
+(defn- next-nth-week [base-time n day-of-week]
   (let [zone (.getZone base-time)]
     (loop [nth nil
            base-t base-time]
@@ -44,6 +44,7 @@
              nil)
            (t/plus base-t (t/months 1))))))))
 
+;; public for unit testing
 (defn next-day-of-week [base-time day-of-week]
   (let [base-day-of-week (t/day-of-week base-time)]
     (if (= base-day-of-week day-of-week)
@@ -53,14 +54,14 @@
                         (+ (- 7 base-day-of-week) day-of-week))]
         (t/plus base-time (t/days this-many))))))
 
-(defn next-x-of-week [base-time week-pattern]
+(defn- next-x-of-week [base-time week-pattern]
   (let [day-of-week (value-or-default (get week-pattern :dayOfWeek) 1)
         week-of-month (value-or-default (get week-pattern :weekOfMonth) nil)]
     (if week-of-month
       (next-nth-week base-time week-of-month day-of-week)
       (next-day-of-week base-time day-of-week))))
 
-(defmulti next-day-of-month
+(defmulti #^{:private true} next-day-of-month
   (fn [base-time day-of-month]
     (cond
      (= :last day-of-month) :last
@@ -70,14 +71,14 @@
      :default (throw (IllegalArgumentException.
                       (str "Invalid day-of-month: " day-of-month))))))
 
-(defmethod next-day-of-month :last [base-time day-of-month]
+(defmethod #^{:private true} next-day-of-month :last [base-time day-of-month]
   (let [next-day (t/plus base-time (t/days 1))
         last-day (t/last-day-of-the-month (t/year next-day) (t/month next-day))
         zone (.getZone base-time)]
     (DateTime. (t/year last-day) (t/month last-day) (t/day last-day)
                (t/hour base-time) (t/minute base-time) (t/second base-time) zone)))
 
-(defmethod next-day-of-month :number [base-time day-of-month]
+(defmethod #^{:private true} next-day-of-month :number [base-time day-of-month]
   (when (> day-of-month 31)
     (throw (IllegalArgumentException.
             (str "Invalid day-of-month: " day-of-month))))
@@ -114,10 +115,10 @@
    :else (throw (IllegalArgumentException.
                  (str "Invalid day-pattern: " day-pattern)))))
 
-(defmulti next-unit-value (fn [time-unit-key base-time instant-pattern]
+(defmulti #^{:private true} next-unit-value (fn [time-unit-key base-time instant-pattern]
                          time-unit-key))
 
-(defmethod next-unit-value :year [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :year [time-unit-key base-time instant-pattern]
   (let [zone (.getZone base-time)]
     (DateTime. (value-or-default (get instant-pattern time-unit-key) (t/year base-time))
                (t/month base-time)
@@ -127,7 +128,7 @@
                (t/second base-time)
                zone)))
 
-(defmethod next-unit-value :month [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :month [time-unit-key base-time instant-pattern]
   (let [unit-value (value-or-default (get instant-pattern time-unit-key) 1)
         rollover (> (t/month base-time) unit-value)
         t (if rollover
@@ -142,7 +143,7 @@
                (t/second t)
                zone)))
 
-(defmethod next-unit-value :day [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :day [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (next-day-instant base-time (get instant-pattern time-unit-key))
     (let [current-day (t/day base-time)
@@ -158,7 +159,7 @@
                                    zone))
           base-time))))
 
-(defmethod next-unit-value :hour [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :hour [time-unit-key base-time instant-pattern]
   (let [unit-value (value-or-default (get instant-pattern time-unit-key) 0)
         rollover (> (t/hour base-time) unit-value)
         t (if rollover
@@ -173,7 +174,7 @@
                (t/second t)
                zone)))
 
-(defmethod next-unit-value :minute [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :minute [time-unit-key base-time instant-pattern]
   (let [unit-value (value-or-default (get instant-pattern time-unit-key) 0)
         rollover (> (t/minute base-time) unit-value)
         t (if rollover
@@ -188,7 +189,7 @@
                (t/second t)
                zone)))
 
-(defmethod next-unit-value :second [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :second [time-unit-key base-time instant-pattern]
   (let [unit-value (value-or-default (get instant-pattern time-unit-key) 0)
         rollover (> (t/second base-time) unit-value)
         t (if rollover (t/plus base-time (t/minutes 1))
@@ -202,7 +203,7 @@
                unit-value
                zone)))
   
-(defmethod next-unit-value :default [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} next-unit-value :default [time-unit-key base-time instant-pattern]
   (throw (IllegalArgumentException. (str "Invalid time unit: " time-unit-key))))
 
 (defn next-instant [base-time instant-pattern]

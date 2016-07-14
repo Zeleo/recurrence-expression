@@ -23,7 +23,7 @@
             [recurrence-expression.instant :as i]
             [recurrence-expression.next :as n]))
 
-(defmulti next-day-occurrence
+(defmulti #^{:private true} next-day-occurrence
   (fn [base-time day-pattern]
     (cond
      (number? day-pattern) :single
@@ -33,7 +33,7 @@
      :else (throw (IllegalArgumentException.
                    (str "Invalid day-pattern: " day-pattern))))))
 
-(defmethod next-day-occurrence :single [base-time day-pattern]
+(defmethod #^{:private true} next-day-occurrence :single [base-time day-pattern]
   (let [next (n/next-day-instant base-time day-pattern)]
     (if (and (= (t/year base-time) (t/year next))
              (= (t/month base-time) (t/month next)))
@@ -46,7 +46,7 @@
                     0)
        true])))
 
-(defmethod next-day-occurrence :multiple [base-time day-pattern]
+(defmethod #^{:private true} next-day-occurrence :multiple [base-time day-pattern]
   (let [next-time-results (map #(next-day-occurrence base-time %) day-pattern)]
     (reduce #(if (t/before? (first %1) (first %2)) %1 %2) next-time-results)))
 
@@ -170,7 +170,7 @@
                  true])
               [current-time false])))))))
 
-(defn contains-week? [recurrence-pattern]
+(defn- contains-week? [recurrence-pattern]
   (let [day-pattern (get recurrence-pattern :day)]
     (cond
      (not day-pattern) false

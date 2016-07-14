@@ -22,7 +22,7 @@
             [recurrence-expression.instant :refer :all])
   (:import (org.joda.time DateTime)))
 
-(defn previous-nth-week [base-time n day-of-week]
+(defn- previous-nth-week [base-time n day-of-week]
   (let [zone (.getZone base-time)]
     (loop [nth nil
            base-t base-time]
@@ -44,7 +44,7 @@
              nil)
            (t/minus base-t (t/months 1))))))))
 
-(defn previous-day-of-week [base-time day-of-week]
+(defn- previous-day-of-week [base-time day-of-week]
   (let [base-day-of-week (t/day-of-week base-time)
         this-many (if (< base-day-of-week day-of-week)
                     (+ (- 7 day-of-week) base-day-of-week)
@@ -60,14 +60,14 @@
 ;; 3rd Monday of the month.
 ;; { :dayOfWeek 2 :weekOfMonth 3 }
 ;;
-(defn previous-x-of-week [base-time week-pattern]
+(defn- previous-x-of-week [base-time week-pattern]
   (let [day-of-week (value-or-default (get week-pattern :dayOfWeek) 1)
         week-of-month (value-or-default (get week-pattern :weekOfMonth) nil)]
     (if week-of-month
       (previous-nth-week base-time week-of-month day-of-week)
       (previous-day-of-week base-time day-of-week))))
 
-(defmulti previous-day-of-month 
+(defmulti #^{:private true} previous-day-of-month 
   (fn [base-time day-of-month]
     (cond
      (= :last day-of-month) :last
@@ -77,14 +77,14 @@
      :default (throw (IllegalArgumentException.
                       (str "Invalid day-of-month: " day-of-month))))))
 
-(defmethod previous-day-of-month :last [base-time day-of-month]
+(defmethod #^{:private true} previous-day-of-month :last [base-time day-of-month]
   (let [prev-month (t/minus base-time (t/months 1))
         zone (.getZone base-time)]
     (t/from-time-zone (t/last-day-of-the-month (t/year prev-month)
                                                (t/month prev-month))
                       zone)))
 
-(defmethod previous-day-of-month :number [base-time day-of-month]
+(defmethod #^{:private true} previous-day-of-month :number [base-time day-of-month]
   (if (> day-of-month 31)
     (throw (IllegalArgumentException.
             (str "Invalid day-of-month: " day-of-month))))
@@ -124,7 +124,7 @@
 ;; {
 ;;  :day { :dayOfWeek [ 4, 6 ] :weekOfMonth 2 }
 ;;  }
-(defn previous-day [base-time day-pattern]
+(defn- previous-day [base-time day-pattern]
   (cond
    (or (number? day-pattern)
        (= :last day-pattern)) (previous-day-of-month base-time day-pattern)
@@ -132,10 +132,10 @@
    :else (throw (IllegalArgumentException.
                     (str "Invalid day-pattern: " day-pattern)))))
 
-(defmulti previous-unit-value (fn [time-unit-key base-time instant-pattern]
+(defmulti #^{:private true} previous-unit-value (fn [time-unit-key base-time instant-pattern]
                                 time-unit-key))
 
-(defmethod previous-unit-value :year [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :year [time-unit-key base-time instant-pattern]
   (DateTime. (if (contains? instant-pattern time-unit-key)
                (get instant-pattern :year)
                (t/year base-time))
@@ -146,7 +146,7 @@
              (t/second base-time)
              (.getZone base-time)))
 
-(defmethod previous-unit-value :month [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :month [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (let [rollback (< (t/month base-time) (get instant-pattern :month))]
       (DateTime. (if rollback
@@ -166,7 +166,7 @@
                (t/second base-time)
                (.getZone base-time))))
 
-(defmethod previous-unit-value :day [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :day [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (previous-day base-time (get instant-pattern time-unit-key))
     (DateTime. (t/year base-time)
@@ -177,7 +177,7 @@
                (t/second base-time)
                (.getZone base-time))))
 
-(defmethod previous-unit-value :hour [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :hour [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (let [rollback (< (t/hour base-time) (get instant-pattern :hour))
           t (if rollback
@@ -198,7 +198,7 @@
                (t/second base-time)
                (.getZone base-time))))
 
-(defmethod previous-unit-value :minute [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :minute [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (let [rollback (< (t/minute base-time) (get instant-pattern :minute))
           t (if rollback
@@ -219,7 +219,7 @@
                (t/second base-time)
                (.getZone base-time))))
 
-(defmethod previous-unit-value :second [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :second [time-unit-key base-time instant-pattern]
   (if (contains? instant-pattern time-unit-key)
     (let [rollback (< (t/second base-time) (get instant-pattern :second))
           t (if rollback
@@ -240,7 +240,7 @@
                0
                (.getZone base-time))))
 
-(defmethod previous-unit-value :default [time-unit-key base-time instant-pattern]
+(defmethod #^{:private true} previous-unit-value :default [time-unit-key base-time instant-pattern]
   (throw (IllegalArgumentException. (str "Invalid time unit: " time-unit-key))))
 
 (defn previous [base-time instant-pattern]
