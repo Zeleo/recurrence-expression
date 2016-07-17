@@ -1,4 +1,4 @@
-(defproject com.bjondinc/recurrence-expression "0.2.2"
+(defproject com.bjondinc/recurrence-expression "0.2.3"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
   :scm "https://github.com/Bjond/recurrence-expression.git"
@@ -7,7 +7,7 @@
             :year 2015
             :key "lgpl-3.0"}
   :plugins [[lein-aot-filter "0.1.0"]]
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
                  [clj-time "0.8.0"]
                  [prismatic/schema "0.4.0"]
