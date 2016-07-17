@@ -18,9 +18,7 @@
 
 (ns recurrence-expression.core
   (:require [clojure.pprint :as pp]
-            [recurrence-expression.data :refer :all])
-  (:import (org.joda.time DateTime DateTimeZone)
-           (java.util Calendar)))
+            [recurrence-expression.data :refer :all]))
 
 (def exp-1 {:every { :year 2 }
           :at { :month 1 :day 7 :hour 15 :minute 30 }})

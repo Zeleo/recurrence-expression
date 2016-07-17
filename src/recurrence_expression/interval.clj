@@ -21,8 +21,7 @@
             [clj-time.core :as t]
             [clj-time.periodic :as tp]
             [recurrence-expression.instant :as i]
-            [recurrence-expression.recurrence :as r])
-  (:import (org.joda.time DateTime DateTimeZone)))
+            [recurrence-expression.recurrence :as r]))
 
 ;; Order matters: from small to big
 (def interval-property-list

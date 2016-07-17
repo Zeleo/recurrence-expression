@@ -23,8 +23,7 @@
             [recurrence-expression.boundary :as b]
             [recurrence-expression.instant :as i]
             [recurrence-expression.interval :as v]
-            [recurrence-expression.recurrence :as r])
-  (:import (org.joda.time DateTime DateTimeZone)))
+            [recurrence-expression.recurrence :as r]))
 
 (declare next-time)
 

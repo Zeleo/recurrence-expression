@@ -16,11 +16,13 @@
 ;; along with Recurrence Expression.  If not, see
 ;; <http://www.gnu.org/licenses/>.
 
+;; NOTE 2016 07 17: schema definitions in this file is now obsolete.
+;; I plan to update it once clojure.spec becomes available.
+
 (ns recurrence-expression.data
   (:require clojure.core clojure.pprint)
   (:require [schema.core :as s])
-  (:require [clojure.data.json :as j])
-  )
+  (:require [clojure.data.json :as j]))
 
 (def Instant
   {
