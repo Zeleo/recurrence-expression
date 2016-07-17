@@ -30,12 +30,15 @@
 (defn- next-time-recurrence-interval
   [current-time interval-pattern recurrence-pattern start-time end-time]
   (let [adjusted (v/adjust-start-time interval-pattern start-time)]
+    #_(println :adjusted adjusted)
+    #_(println)
     (loop [time current-time]
       (if (nil? time)
         nil
         (let [end-prime (v/end-prime time interval-pattern)
               next (next-time (t/minus time (t/seconds 1))
                               {:at recurrence-pattern} time end-prime)]
+          #_(println :time time :end-prime end-prime :next next)
           (if next
             next
             (recur
@@ -52,12 +55,17 @@
   
   ([current-time schedule start-time end-time]
      (let [current-time (v/zero-out-millis current-time)
-           start-time (if (nil? start-time)
-                        i/min-date-time
-                        (v/zero-out-millis start-time))
-           end-time (if (nil? end-time)
-                      i/max-date-time
-                      (v/zero-out-millis end-time))
+           zone (.getZone current-time)
+           start-time (t/to-time-zone
+                       (if (nil? start-time)
+                         i/min-date-time
+                         (v/zero-out-millis start-time))
+                       zone)
+           end-time (t/to-time-zone
+                     (if (nil? end-time)
+                       i/max-date-time
+                       (v/zero-out-millis end-time))
+                     zone)
            recurrence (get schedule :at)
            boundaries (get schedule :between)
            interval (get schedule :every)]

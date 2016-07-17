@@ -225,6 +225,47 @@
     )
   )
 
+(deftest test-every-3-minutes
+  (let [s {:every {:minute 3}}
+        start-time (t/date-time 2015 4 1)
+        current-time (t/date-time 2015 4 1 0 0 5)
+        fire-times (next-n-times current-time s 3 start-time)]
+    #_(clojure.pprint/pprint fire-times)
+    (is (= (t/date-time 2015 4 1 0 3 0)
+           (get fire-times 0)))
+    (is (= (t/date-time 2015 4 1 0 6 0)
+           (get fire-times 1)))
+    (is (= (t/date-time 2015 4 1 0 9 0)
+           (get fire-times 2)))
+    )
+  )
+
+(deftest test-every-3-minutes-2
+  (let [s {:every {:minute 3}}
+        start-time nil
+        current-time (t/date-time 2015 4 1 0 0 5)
+        fire-times (next-n-times current-time s 3 start-time)]
+    #_(clojure.pprint/pprint fire-times)
+    (is (= (t/date-time 2015 4 1 0 3 0)
+           (get fire-times 0)))
+    (is (= (t/date-time 2015 4 1 0 6 0)
+           (get fire-times 1)))
+    (is (= (t/date-time 2015 4 1 0 9 0)
+           (get fire-times 2)))
+    )
+  )
+
+(deftest test-every-3-minutes-zone
+  (let [s {:every {:minute 3}}
+        start-time nil
+        zone (t/time-zone-for-id "US/Eastern")
+        current-time (t/from-time-zone (t/date-time 2015 4 1 0 0 5) zone)
+        fire-times (next-n-times current-time s 3 start-time)]
+    #_(clojure.pprint/pprint fire-times)
+    (let [t1 (get fire-times 0)
+          zone1 (.getZone t1)]
+      (is (= zone zone1)))))
+
 (deftest test-every-2
   (let [s {
            :every { :month 13 }
