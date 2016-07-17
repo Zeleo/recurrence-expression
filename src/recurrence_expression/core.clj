@@ -35,7 +35,8 @@
       (if (nil? time)
         nil
         (let [end-prime (v/end-prime time interval-pattern)
-              next (next-time time {:at recurrence-pattern} time end-prime)]
+              next (next-time (t/minus time (t/seconds 1))
+                              {:at recurrence-pattern} time end-prime)]
           (if next
             next
             (recur
@@ -61,9 +62,9 @@
            recurrence (get schedule :at)
            boundaries (get schedule :between)
            interval (get schedule :every)]
-       (loop [time (let [current-time-prime (t/plus current-time (t/seconds 1))]
-                     (if (t/after? current-time-prime start-time)
-                       current-time-prime start-time))]
+       (loop [time (let [plus-one (t/plus current-time (t/seconds 1))]
+                     (if (t/after? plus-one start-time)
+                       plus-one start-time))]
          (if (or (= time end-time)
                  (t/after? time end-time)
                  (t/after? time i/max-date-time))
