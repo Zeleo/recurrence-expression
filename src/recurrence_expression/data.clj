@@ -62,5 +62,6 @@
 (defn from-json [json]
   (j/read-str json :key-fn keyword))
 
-(defn to-json [schedule]
+;; commented this out b/c of issue with write-str circa 2016/07.
+#_(defn to-json [schedule]
   (j/write-str schedule))
