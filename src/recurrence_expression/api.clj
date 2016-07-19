@@ -33,6 +33,18 @@
                         [nextTime [org.joda.time.DateTime String org.joda.time.DateTime
                                    org.joda.time.DateTime]
                          org.joda.time.DateTime]
+
+                        #^{:static true}
+                        [nextTimeA [org.joda.time.DateTime Object]
+                         org.joda.time.DateTime]
+                        #^{:static true}
+                        [nextTimeA [org.joda.time.DateTime Object org.joda.time.DateTime]
+                         org.joda.time.DateTime]
+                        #^{:static true}
+                        [nextTimeA [org.joda.time.DateTime Object org.joda.time.DateTime
+                                   org.joda.time.DateTime]
+                         org.joda.time.DateTime]
+                        
                         #^{:static true}
                         [nextNTimes [org.joda.time.DateTime String int]
                          java.util.List]
@@ -43,6 +55,20 @@
                         [nextNTimes [org.joda.time.DateTime String int org.joda.time.DateTime
                                      org.joda.time.DateTime]
                          java.util.List]
+                        
+                        #^{:static true}
+                        [nextNTimesA [org.joda.time.DateTime Object int]
+                         java.util.List]
+                        #^{:static true}
+                        [nextNTimesA [org.joda.time.DateTime Object int org.joda.time.DateTime]
+                         java.util.List]
+                        #^{:static true}
+                        [nextNTimesA [org.joda.time.DateTime Object int org.joda.time.DateTime
+                                     org.joda.time.DateTime]
+                         java.util.List]
+                        
+                        #^{:static true}
+                        [fromJSON [String] Object]
                         ]))
 
 (defn method-nextTime
@@ -56,6 +82,14 @@
      (let [pattern (from-json pattern-string)]
        (next-time current-time pattern start-time end-time))))
 
+(defn method-nextTimeA
+  ([current-time pattern]
+     (next-time current-time pattern))
+  ([current-time pattern start-time]
+     (next-time current-time pattern start-time))
+  ([current-time pattern start-time end-time]
+     (next-time current-time pattern start-time end-time)))
+
 (defn method-nextNTimes
   ([current-time pattern-string num-times]
      (let [pattern (from-json pattern-string)]
@@ -66,3 +100,15 @@
   ([current-time pattern-string num-times start-time end-time]
      (let [pattern (from-json pattern-string)]
        (next-n-times current-time pattern num-times start-time end-time))))
+
+(defn method-nextNTimesA
+  ([current-time pattern num-times]
+     (next-n-times current-time pattern num-times))
+  ([current-time pattern num-times start-time]
+     (next-n-times current-time pattern num-times start-time))
+  ([current-time pattern num-times start-time end-time]
+     (next-n-times current-time pattern num-times start-time end-time)))
+
+(defn method-fromJSON
+  [json]
+  (from-json json))
