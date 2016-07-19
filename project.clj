@@ -1,4 +1,4 @@
-(defproject com.bjondinc/recurrence-expression "0.2.4"
+(defproject com.bjondinc/recurrence-expression "0.2.5"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
   :scm "https://github.com/Bjond/recurrence-expression.git"
