@@ -20,9 +20,10 @@
 ;; I plan to update it once clojure.spec becomes available.
 
 (ns recurrence-expression.data
-  (:require clojure.core clojure.pprint)
-  (:require [schema.core :as s])
-  (:require [clojure.data.json :as j]))
+  (:require [clojure.pprint :as pp]
+            [schema.core :as s]
+            [cheshire.core :as c]))
+  
 
 (def Instant
   {
@@ -60,8 +61,7 @@
               (s/optional-key :repeat) (s/either Recurrence [Recurrence]) }))
 
 (defn from-json [json]
-  (j/read-str json :key-fn keyword))
+  (c/parse-string json true))
 
-;; commented this out b/c of issue with write-str circa 2016/07.
-#_(defn to-json [schedule]
-  (j/write-str schedule))
+(defn to-json [schedule]
+  (c/generate-string schedule))

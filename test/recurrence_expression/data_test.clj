@@ -21,8 +21,7 @@
             [recurrence-expression.data :refer :all]
             [clj-time.core :as t]))
 
-;; commented this out b/c of issue with write-str circa 2016/07.
-#_(deftest test-to-and-from-json
+(deftest test-to-and-from-json
   (let [s {
            :every { :month 13 }
            :at { :day { :weekOfMonth 3 :dayOfWeek 4 } :hour 9 :minute 30 }
