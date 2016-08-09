@@ -109,7 +109,7 @@ choice of JSON as the underlying syntax for recurrence expressions was
 a good one.  JSON is far easier to manipulate programmatically for
 both the producer and the consumer.  We do believe there should be
 interoperability between recurrence expressions and RFC 2445.  No
-promises, but we plan to translation between recurrence rules and
+promises, but we plan to provide translation between recurrence rules and
 recurrence expressions in the future.
 
 ## Usage
