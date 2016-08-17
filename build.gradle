@@ -36,7 +36,7 @@ version = '0.2.9'
 
 clojure {
     warnOnReflection = false
-    aotCompile = true
+    //aotCompile = true
     uberjar.enabled = false
 }
 
