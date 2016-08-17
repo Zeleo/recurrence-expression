@@ -1,0 +1,63 @@
+/**
+ * This buildscript is for Author's private use only.
+ * Please use leiningen to build recurrence-expression.
+ */
+
+buildscript {
+  repositories {
+    maven {url 'http://nexus.bjondhealth.com/nexus/content/groups/public'}
+    maven {url 'http://nexus.bjondhealth.com/nexus/content/groups/private'}
+  }
+  dependencies {
+    classpath 'clojuresque:clojuresque:1.7.0'
+  }
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'clojure'
+
+defaultTasks 'jar'
+
+repositories {
+  mavenLocal()
+  maven {url 'http://nexus.bjondhealth.com/nexus/content/groups/public'}
+}
+
+dependencies {
+    compile 'org.clojure:clojure:1.8.0'
+    compile 'org.clojure:math.numeric-tower:0.0.4'
+    compile 'clj-time:clj-time:0.11.0'
+    compile 'prismatic:schema:0.4.0'
+    compile 'cheshire:cheshire:5.6.3'
+}
+
+group = 'com.bjondinc'
+version = '0.2.8'
+
+clojure {
+    warnOnReflection = false
+    aotCompile = true
+    uberjar.enabled = false
+}
+
+clojureTest {
+    classpath += files("src/main/resources", "src/test/resources")
+}
+
+jar {
+  doLast {
+    copy {
+      from 'build/libs'
+      into '../../lib'
+      include '*.jar'
+    }
+  }
+}
+
+task cleanJar(type: Delete) {
+ delete fileTree('../../lib/') {
+        include '**/recurrence-expression*.jar'
+    }
+}
+
+clean.dependsOn(cleanJar)

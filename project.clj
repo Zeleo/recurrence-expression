@@ -9,9 +9,12 @@
   :plugins [[lein-aot-filter "0.1.0"]]
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/math.numeric-tower "0.0.4"]
-                 [clj-time "0.8.0"]
+                 [clj-time "0.11.0"]
                  [prismatic/schema "0.4.0"]
                  [cheshire "5.6.3"]]
+  :source-paths ["src/main/clojure"]
+  :test-paths ["src/test/clojure"]
+  :resource-paths ["src/main/resources" "src/test/resources"] 
   :deploy-repositories [["releases" {:url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                                      :creds :gpg}]
                          ["snapshots" {:url "https://oss.sonatype.org/content/repositories/snapshots/"
