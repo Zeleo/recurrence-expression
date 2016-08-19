@@ -29,3 +29,34 @@
         json (to-json s)]
     (is (= s (from-json json)))))
 
+(deftest test-keyword1
+  (let [expected {:every {:year 1},
+                  :at {:hour 0,
+                       :minute 0,
+                       :month 1,
+                       :day :last}} ;; <- keyword
+        json "{\"every\": {\"year\": 1},
+               \"at\": {\"hour\": 0,
+                        \"minute\": 0,
+                        \"month\": 1,
+                        \"day\": \"last\"}}" ;; <- "last"
+        actual (from-json json)]
+    #_(println :actual)
+    #_(clojure.pprint/pprint actual)
+    (is (= expected actual))))
+
+(deftest test-keyword2
+  (let [expected {:every {:year 1},
+                  :at {:hour 0,
+                       :minute 0,
+                       :month 1,
+                       :day :last}} ;; <- keyword
+        json "{\"every\": {\"year\": 1},
+               \"at\": {\"hour\": 0,
+                        \"minute\": 0,
+                        \"month\": 1,
+                        \"day\": \":last\"}}" ;; <- ":last"
+        actual (from-json json)]
+    #_(println :actual)
+    #_(clojure.pprint/pprint actual)
+    (is (= expected actual))))

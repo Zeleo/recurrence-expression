@@ -239,3 +239,20 @@
       (is (= expected
              (next-n-times current exp num start end))))
     ))
+
+(deftest sample-yearly-last-day-in-jan
+  (let [exp {:every {:year 1},
+             :at {:hour 0,
+                  :minute 0,
+                  :month 1,
+                  :day :last}}
+        num 3]
+    (let [current (t/date-time 2016 7 13)
+          start (t/date-time 2016 7 1)
+          end (t/date-time 2030 1 1)
+          expected [(t/date-time 2017 01 31 0 0)
+                    (t/date-time 2018 01 31 0 0)
+                    (t/date-time 2019 01 31 0 0)]]
+      (is (= expected
+             (next-n-times current exp num start end))))
+    ))

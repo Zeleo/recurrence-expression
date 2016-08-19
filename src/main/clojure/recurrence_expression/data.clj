@@ -21,6 +21,8 @@
 
 (ns recurrence-expression.data
   (:require [clojure.pprint :as pp]
+            [clojure.string :as str]
+            [clojure.walk :as walk]
             [schema.core :as s]
             [cheshire.core :as c]))
   
@@ -61,7 +63,15 @@
               (s/optional-key :repeat) (s/either Recurrence [Recurrence]) }))
 
 (defn from-json [json]
-  (c/parse-string json true))
+  (let [raw (c/parse-string json true)
+        f (fn [i]
+            (if (string? i)
+              (cond
+               (str/starts-with? i ":") (keyword (subs i 1))
+               (= "last" (str/lower-case i)) :last
+               :else i)
+            i))]
+    (walk/postwalk f raw)))
 
 (defn to-json [schedule]
   (c/generate-string schedule))
