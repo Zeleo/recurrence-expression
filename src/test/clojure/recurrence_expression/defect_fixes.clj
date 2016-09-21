@@ -54,3 +54,18 @@
                   (t/from-time-zone (t/date-time 2016 9 3 16 50 0) t-zone)
                   (t/from-time-zone (t/date-time 2016 9 4 16 50 0) t-zone)]]
     (run-print-assert expr current-t start-t end-t t-zone (count expected) expected)))
+
+(deftest defect-3094
+  (let [expr {:every {:year 1}
+              :at {:hour 0
+                   :minute 0
+                   :month 2
+                   :day :last}}
+        current-t (t/date-time 2016 1 25)
+        start-t (t/date-time 2016 1 1)
+        end-t (t/date-time 2025 1 1)
+        t-zone (t/time-zone-for-id "US/Eastern")
+        expected [(t/from-time-zone (t/date-time 2016 02 29) t-zone)
+                  (t/from-time-zone (t/date-time 2017 02 28) t-zone)
+                  (t/from-time-zone (t/date-time 2018 02 28) t-zone)]]
+    (run-print-assert expr current-t start-t end-t t-zone (count expected) expected)))

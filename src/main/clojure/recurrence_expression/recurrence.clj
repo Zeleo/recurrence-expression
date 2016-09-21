@@ -200,14 +200,22 @@
                                         (t/years 1))
                                 true]
      (< (t/day (t/last-day-of-the-month year
-                                        next-value)) day) [(t/plus (t/date-time year
-                                                                                next-value
-                                                                                1
-                                                                                0
-                                                                                0
-                                                                                0)
-                                                                   (t/months 1))
-                                                           true]
+                                        next-value)) day) (if (= :last (get recurrence-pattern :day))
+                                                            [(t/date-time year
+                                                                          next-value
+                                                                          (t/day (t/last-day-of-the-month
+                                                                                  year next-value))
+                                                                          0
+                                                                          0
+                                                                          0) false]
+                                                            [(t/plus (t/date-time year
+                                                                                  next-value
+                                                                                  1
+                                                                                  0
+                                                                                  0
+                                                                                  0)
+                                                                     (t/months 1))
+                                                             true])
      :else (if (and (contains-week? compiled-recurrence-pattern)
                     (not= current next-value))
              (next-day
@@ -257,36 +265,38 @@
           )))))
 
 (defmulti next-occurrence
-  (fn [current-time recurrence-patterns]
+  (fn [current-time recurrence-patterns end-time]
     (cond (or (nil? recurrence-patterns) (empty? recurrence-patterns)) :empty
           (sequential? recurrence-patterns) :multiple
           (map? recurrence-patterns) :single
           :else (throw (IllegalArgumentException.
                            (str "Invalid argument: " recurrence-patterns))))))
 
-(defmethod next-occurrence :empty [current-time recurrence-pattern]
+(defmethod next-occurrence :empty [current-time recurrence-pattern end-time]
   current-time)
 
-(defmethod next-occurrence :multiple [current-time recurrence-patterns]
+(defmethod next-occurrence :multiple [current-time recurrence-patterns end-time]
   (loop [patterns recurrence-patterns
          time i/max-date-time]
     (if (empty? patterns)
       time
       (let [pattern (first patterns)
-            t (next-occurrence current-time pattern)]
+            t (next-occurrence current-time pattern end-time)]
         (recur
          (rest patterns)
          (if (t/before? t time)
            t
            time))))))
 
-(defmethod next-occurrence :single [current-time recurrence-pattern]
+(defmethod next-occurrence :single [current-time recurrence-pattern end-time]
   (let [compiled (compile-recurrence-pattern recurrence-pattern)
         zone (.getZone current-time)]
     (loop [time (t/from-time-zone current-time t/utc)
            keep-going true]
-      (if (not keep-going)
-        (t/from-time-zone time zone)
-        (let [[t roll-over] (roll-forward time compiled recurrence-pattern)]
-          (recur t
-                 roll-over))))))
+      (cond
+       (or (= time end-time)
+           (t/after? time end-time)) nil
+       (not keep-going) (t/from-time-zone time zone)
+       :else (let [[t roll-over] (roll-forward time compiled recurrence-pattern)]
+               (recur t
+                      roll-over))))))

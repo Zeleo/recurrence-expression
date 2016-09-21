@@ -31,7 +31,6 @@
   [current-time interval-pattern recurrence-pattern start-time end-time]
   (let [adjusted (v/adjust-start-time interval-pattern start-time)]
     #_(println :adjusted adjusted)
-    #_(println)
     (loop [time current-time]
       (if (nil? time)
         nil
@@ -83,7 +82,7 @@
                                                                            recurrence
                                                                            start-time
                                                                            end-time)
-                  recurrence (r/next-occurrence time recurrence)
+                  recurrence (r/next-occurrence time recurrence end-time)
                   interval (v/next-interval time interval start-time)
                   :else (throw (Exception.
                                 (str "Invalid expression :at or :every must be defined: " schedule))))]
