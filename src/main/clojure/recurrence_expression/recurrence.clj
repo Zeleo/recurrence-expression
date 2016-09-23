@@ -23,6 +23,11 @@
             [recurrence-expression.instant :as i]
             [recurrence-expression.next :as n]))
 
+(defn- last-week-of-month-pattern?
+  [day-pattern]
+  (and (map? day-pattern)
+       (= :last (get day-pattern :weekOfMonth))))
+
 (defmulti #^{:private true} next-day-occurrence
   (fn [base-time context day-pattern]
     (cond
@@ -35,9 +40,11 @@
 
 (defmethod #^{:private true} next-day-occurrence :single [base-time context day-pattern]
   (let [next (n/next-day-instant base-time day-pattern)
-        context (if (= day-pattern :last)
-                  (assoc context :last-day-of-month true)
-                  context)]
+        context (cond
+                 (= day-pattern :last) (assoc context :last-day-of-month day-pattern)
+                 (last-week-of-month-pattern? day-pattern) (assoc context
+                                                             :last-week-of-month day-pattern)
+                 :else context)]
     (if (and (= (t/year base-time) (t/year next))
              (= (t/month base-time) (t/month next)))
       [next false context] ;; didn't roll-over
@@ -194,6 +201,12 @@
                             (contains? day-pattern :dayOfWeek))
      :else false)))
 
+(defn- day-of-week
+  [pattern]
+  (when (not (map? pattern))
+    (throw (Exception. (str "Unexpected pattern (expected a map): " pattern))))
+  (i/value-or-default (get pattern :dayOfWeek) 1))
+
 (defn- next-month [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :month)
         current (t/month current-time)
@@ -211,9 +224,21 @@
                                 true
                                 context]
      (contains? context :last-day-of-month) [(t/date-time year
+                                                          next-value
+                                                          (t/day (t/last-day-of-the-month
+                                                                  year next-value))
+                                                          (t/hour current-time)
+                                                          (t/minute current-time)
+                                                          (t/second current-time))
+                                             false
+                                             context]
+     (contains? context :last-week-of-month) [(t/date-time year
                                                            next-value
-                                                           (t/day (t/last-day-of-the-month
-                                                                   year next-value))
+                                                           (t/day
+                                                            (i/last-day-of-week
+                                                             year next-value
+                                                             (day-of-week
+                                                              (get context :last-week-of-month))))
                                                            (t/hour current-time)
                                                            (t/minute current-time)
                                                            (t/second current-time))
@@ -260,9 +285,20 @@
       (throw (Exception. "Maximum time reached"))
       [(t/date-time next-value
                     (t/month current-time)
-                    (if (contains? context :last-day-of-month)
-                      (t/day (t/last-day-of-the-month next-value (t/month current-time)))
-                      (t/day current-time))
+                    
+                    (cond
+                     (contains? context :last-day-of-month)
+                     (t/day (t/last-day-of-the-month next-value (t/month current-time)))
+
+                     (contains? context :last-week-of-month)
+                     (t/day (i/last-day-of-week
+                             next-value (t/month current-time)
+                             (day-of-week
+                              (get context :last-week-of-month))))
+
+                     :else
+                     (t/day current-time))
+                    
                     (t/hour current-time)
                     (t/minute current-time)
                     (t/second current-time))
