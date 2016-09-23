@@ -24,7 +24,7 @@
             [recurrence-expression.next :as n]))
 
 (defmulti #^{:private true} next-day-occurrence
-  (fn [base-time day-pattern]
+  (fn [base-time context day-pattern]
     (cond
      (number? day-pattern) :single
      (= day-pattern :last) :single
@@ -33,21 +33,25 @@
      :else (throw (IllegalArgumentException.
                    (str "Invalid day-pattern: " day-pattern))))))
 
-(defmethod #^{:private true} next-day-occurrence :single [base-time day-pattern]
-  (let [next (n/next-day-instant base-time day-pattern)]
+(defmethod #^{:private true} next-day-occurrence :single [base-time context day-pattern]
+  (let [next (n/next-day-instant base-time day-pattern)
+        context (if (= day-pattern :last)
+                  (assoc context :last-day-of-month true)
+                  context)]
     (if (and (= (t/year base-time) (t/year next))
              (= (t/month base-time) (t/month next)))
-      [next false] ;; didn't roll-over
+      [next false context] ;; didn't roll-over
       [(t/date-time (t/year next)
                     (t/month next)
                     1
                     0
                     0
                     0)
-       true])))
+       true
+       context])))
 
-(defmethod #^{:private true} next-day-occurrence :multiple [base-time day-pattern]
-  (let [next-time-results (map #(next-day-occurrence base-time %) day-pattern)]
+(defmethod #^{:private true} next-day-occurrence :multiple [base-time context day-pattern]
+  (let [next-time-results (map #(next-day-occurrence base-time context %) day-pattern)]
     (reduce #(if (t/before? (first %1) (first %2)) %1 %2) next-time-results)))
 
 ;; made public for unit tests
@@ -89,7 +93,7 @@
       :roll-over
       (first v))))
 
-(defn- next-second [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-second [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :second)
         current (t/second current-time)
         next-value (next-value current pattern)]
@@ -101,12 +105,14 @@
                             (t/minute current-time)
                             0)
                (t/minutes 1))
-       true]
+       true
+       context]
       [(let [increment (- next-value current)]
          (t/plus current-time (t/seconds increment)))
-       false])))
+       false
+       context])))
 
-(defn- next-minute [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-minute [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :minute)
         current (t/minute current-time)
         next-value (next-value current pattern)]
@@ -118,16 +124,18 @@
                             0
                             0)
                (t/hours 1))
-       true]
+       true
+       context]
       [(t/date-time (t/year current-time)
                     (t/month current-time)
                     (t/day current-time)
                     (t/hour current-time)
                     next-value
                     (t/second current-time))
-       false])))
+       false
+       context])))
 
-(defn- next-hour [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-hour [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :hour)
         current (t/hour current-time)
         next-value (next-value current pattern)]
@@ -139,25 +147,27 @@
                             0
                             0)
                (t/days 1))
-       true]
+       true
+       context]
       [(t/date-time (t/year current-time)
                     (t/month current-time)
                     (t/day current-time)
                     next-value
                     (t/minute current-time)
                     (t/second current-time))
-       false])))
+       false
+       context])))
 
-(defn- next-day [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-day [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [day-pattern (get recurrence-pattern :day)]
     (if day-pattern
-      (next-day-occurrence current-time day-pattern)
+      (next-day-occurrence current-time context day-pattern)
       (let [day-index (get i/instant-property-index-map :day)
             highest-order-property (i/highest-order-property-defined recurrence-pattern)
             highest-order-property-index (get i/instant-property-index-map highest-order-property)
             all (> day-index highest-order-property-index)]
         (if all
-          [current-time false]
+          [current-time false context]
           (let [current-day (t/day current-time)]
             (if (> current-day 1)
               (let [time (t/plus current-time (t/months 1))]
@@ -168,7 +178,7 @@
                               0
                               0)
                  true])
-              [current-time false])))))))
+              [current-time false context])))))))
 
 (defn- contains-week? [recurrence-pattern]
   (let [day-pattern (get recurrence-pattern :day)]
@@ -184,7 +194,7 @@
                             (contains? day-pattern :dayOfWeek))
      :else false)))
 
-(defn- next-month [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-month [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :month)
         current (t/month current-time)
         next-value (next-value current pattern)
@@ -198,24 +208,29 @@
                                                      0
                                                      0)
                                         (t/years 1))
-                                true]
-     (< (t/day (t/last-day-of-the-month year
-                                        next-value)) day) (if (= :last (get recurrence-pattern :day))
-                                                            [(t/date-time year
-                                                                          next-value
-                                                                          (t/day (t/last-day-of-the-month
-                                                                                  year next-value))
-                                                                          0
-                                                                          0
-                                                                          0) false]
-                                                            [(t/plus (t/date-time year
-                                                                                  next-value
-                                                                                  1
-                                                                                  0
-                                                                                  0
-                                                                                  0)
-                                                                     (t/months 1))
-                                                             true])
+                                true
+                                context]
+     (contains? context :last-day-of-month) [(t/date-time year
+                                                           next-value
+                                                           (t/day (t/last-day-of-the-month
+                                                                   year next-value))
+                                                           (t/hour current-time)
+                                                           (t/minute current-time)
+                                                           (t/second current-time))
+                                              false
+                                              context]
+     (< (t/day
+         (t/last-day-of-the-month
+          year
+          next-value)) day) [(t/plus (t/date-time year
+                                                  next-value
+                                                  1
+                                                  0
+                                                  0
+                                                  0)
+                                     (t/months 1))
+                             true
+                             context]
      :else (if (and (contains-week? compiled-recurrence-pattern)
                     (not= current next-value))
              (next-day
@@ -225,6 +240,7 @@
                            (t/hour current-time)
                            (t/minute current-time)
                            (t/second current-time))
+              context
               compiled-recurrence-pattern
               recurrence-pattern)
              [(t/date-time year
@@ -233,9 +249,10 @@
                            (t/hour current-time)
                            (t/minute current-time)
                            (t/second current-time))
-              false]))))
+              false
+              context]))))
 
-(defn- next-year [current-time compiled-recurrence-pattern recurrence-pattern]
+(defn- next-year [current-time context compiled-recurrence-pattern recurrence-pattern]
   (let [pattern (get compiled-recurrence-pattern :year)
         current (t/year current-time)
         next-value (next-value current pattern)]
@@ -243,25 +260,30 @@
       (throw (Exception. "Maximum time reached"))
       [(t/date-time next-value
                     (t/month current-time)
-                    (t/day current-time)
+                    (if (contains? context :last-day-of-month)
+                      (t/day (t/last-day-of-the-month next-value (t/month current-time)))
+                      (t/day current-time))
                     (t/hour current-time)
                     (t/minute current-time)
                     (t/second current-time))
-       false])))
+       false
+       context])))
 
 (defn- roll-forward [current-time compiled-recurrence-pattern recurrence-pattern]
   (loop [functions [next-second next-minute next-hour next-day next-month next-year]
          time current-time
-         roll-over false]
+         roll-over false
+         context {}]
     (if (empty? functions)
       [time roll-over]
       (let [f (first functions)
-            [t ro] (f time compiled-recurrence-pattern recurrence-pattern)]
+            [t ro c] (f time context compiled-recurrence-pattern recurrence-pattern)]
         (if ro
           [t ro]
           (recur (rest functions)
                  t
-                 ro) ;; guaranteed false
+                 ro ;; guaranteed false
+                 c)
           )))))
 
 (defmulti next-occurrence
