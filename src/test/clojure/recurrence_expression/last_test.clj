@@ -34,8 +34,8 @@
 (defn run-print-assert
   [expr current-t start-face-t end-face-t t-zone count expected]
   (let [actual (run expr current-t start-face-t end-face-t t-zone count)]
-    (println :actual)
-    (pp/pprint actual)
+    #_(println :actual)
+    #_(pp/pprint actual)
     (is (= expected actual))))
 
 (deftest last-day-single
