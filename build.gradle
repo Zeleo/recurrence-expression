@@ -44,16 +44,6 @@ clojureTest {
     classpath += files("src/main/resources", "src/test/resources")
 }
 
-jar {
-  doLast {
-    copy {
-      from 'build/libs'
-      into '../../lib'
-      include '*.jar'
-    }
-  }
-}
-
 task cleanJar(type: Delete) {
  delete fileTree('../../lib/') {
         include '**/recurrence-expression*.jar'
