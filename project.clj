@@ -1,10 +1,10 @@
-(defproject com.bjondinc/recurrence-expression "0.2.9"
+(defproject com.bjondinc/recurrence-expression "0.2.10"
   :description "JSON for expressing recurrence patterns"
   :url "https://github.com/Bjond/recurrence-expression"
   :scm "https://github.com/Bjond/recurrence-expression.git"
   :license {:name "GNU Lesser General Public License v3.0"
             :url "http://www.gnu.org/licenses/lgpl-3.0.txt"
-            :year 2015
+            :year 2016
             :key "lgpl-3.0"}
   :plugins [[lein-aot-filter "0.1.0"]]
   :dependencies [[org.clojure/clojure "1.8.0"]
